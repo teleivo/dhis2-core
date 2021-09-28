@@ -43,7 +43,6 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
-import org.hisp.dhis.analytics.AnalyticsAggregationType;
 import org.hisp.dhis.analytics.DataQueryService;
 import org.hisp.dhis.analytics.EventOutputType;
 import org.hisp.dhis.analytics.event.EventDataQueryService;
@@ -217,22 +216,6 @@ public class DefaultEventDataQueryService
             }
         }
 
-        if ( request.getAggregationType() != null )
-        {
-            params.withAggregationType( AnalyticsAggregationType.fromAggregationType( request.getAggregationType() ) );
-        }
-
-        if ( request.getOutputType() == EventOutputType.ENROLLMENT )
-        {
-            params.withStartEndDatesForPeriods( false );
-        }
-        else
-        {
-            params.withStartDate( request.getStartDate() );
-
-            params.withEndDate( request.getEndDate() );
-        }
-
         return params
             .withValue( getValueDimension( request.getValue() ) )
             .withSkipRounding( request.isSkipRounding() )
@@ -244,6 +227,8 @@ public class DefaultEventDataQueryService
             .withAggregateData( request.isAggregateData() )
             .withProgram( pr )
             .withProgramStage( ps )
+            .withStartDate( request.getStartDate() )
+            .withEndDate( request.getEndDate() )
             .withOrganisationUnitMode( request.getOuMode() )
             .withSkipMeta( request.isSkipMeta() )
             .withSkipData( request.isSkipData() )
