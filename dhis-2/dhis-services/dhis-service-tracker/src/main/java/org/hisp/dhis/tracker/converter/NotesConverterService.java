@@ -86,17 +86,12 @@ public class NotesConverterService implements TrackerConverterService<Note, Trac
 
     public static String getValidUsername( String userName, User currentUser )
     {
-        String validUsername = userName;
 
-        if ( StringUtils.isEmpty( validUsername ) )
+        if ( StringUtils.isEmpty( userName ) || userName.length() > UserCredentials.USERNAME_MAX_LENGTH )
         {
-            validUsername = User.getSafeUsername( currentUser.getUsername() );
-        }
-        else if ( validUsername.length() > UserCredentials.USERNAME_MAX_LENGTH )
-        {
-            validUsername = User.getSafeUsername( currentUser.getUsername() );
+            return User.getSafeUsername( currentUser.getUsername() );
         }
 
-        return validUsername;
+        return userName;
     }
 }
