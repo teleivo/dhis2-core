@@ -84,7 +84,7 @@ public class NotesConverterService implements TrackerConverterService<Note, Trac
         return notes.stream().map( n -> from( preheat, n ) ).collect( Collectors.toList() );
     }
 
-    public static String getValidUsername( String userName, User currentUser )
+    private static String getValidUsername( String userName, User currentUser )
     {
 
         if ( StringUtils.isEmpty( userName ) || userName.length() > UserCredentials.USERNAME_MAX_LENGTH )
