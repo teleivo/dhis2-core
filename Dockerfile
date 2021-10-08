@@ -7,10 +7,6 @@ FROM maven:3.8.1-jdk-11-slim as build
 ARG IDENTIFIER=unknown
 LABEL identifier=${IDENTIFIER}
 
-RUN apt-get update && \
-    apt-get upgrade -y && \
-    rm -rf /var/lib/apt/lists/*
-
 WORKDIR /src
 
 # TODO copy only pom.xml files while keeping the fs hierarchy
