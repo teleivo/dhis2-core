@@ -9,12 +9,17 @@ LABEL identifier=${IDENTIFIER}
 
 RUN apt-get update && \
     apt-get upgrade -y && \
-    apt-get install --no-install-recommends -y \
-        git && \
     rm -rf /var/lib/apt/lists/*
 
 WORKDIR /src
 
+# TODO copy only pom.xml files while keeping the fs hierarchy
+# leverage docker cache by first getting all dependencies
+COPY ./dhis-2/pom.xml ./pom.xml
+RUN mvn dependency:go-offline -B
+
+# combine with dockerignore
+# TODO can we narrow down what we copy?
 # NB: web-apps build uses `git rev-parse` to tag the build, so just copy over the whole tree for now
 COPY . .
 
