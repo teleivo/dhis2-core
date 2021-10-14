@@ -55,13 +55,17 @@ COPY ./dhis-2/dhis-web-api/pom.xml ./dhis-web-api/pom.xml
 COPY ./dhis-2/dhis-web-api-test/pom.xml ./dhis-web-api-test/pom.xml
 COPY ./dhis-2/dhis-web-embedded-jetty/pom.xml ./dhis-web-embedded-jetty/pom.xml
 
+FROM build as another 
+
 # does it make sense to fetch all dependencies of the modules? Will it resolve
 # the dependencies of their submodule?
-RUN mvn dependency:go-offline --batch-mode
 RUN mvn dependency:go-offline --batch-mode -pl dhis-api
 # does not seem to have an effect on it not being found by the subsequent
 # install
 RUN mvn --offline install -DskipTests -pl dhis-api
+
+# I cannot do the root pom go-offline since dhis-support-commons needs the org.hisp.dhis:dhis-api:jar
+# RUN mvn dependency:go-offline --batch-mode
 
 RUN mvn dependency:go-offline --batch-mode -pl dhis-services
 RUN mvn dependency:go-offline --batch-mode -pl dhis-support
