@@ -22,8 +22,8 @@ WORKDIR /src
 COPY dhis-2 .
 
 # TODO: We should be able to achieve much faster incremental builds and cached dependencies using
-RUN mvn clean install -f pom.xml -Dmaven.test.skip=true
-RUN mvn clean install -Pdev -Pjdk11 -U -f dhis-web/pom.xml -Dmaven.test.skip=true
+RUN mvn clean install -f pom.xml -Dmaven.test.skip=true --batch-mode -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn
+RUN mvn clean install -Pdev -Pjdk11 -U -f dhis-web/pom.xml -Dmaven.test.skip=true --batch-mode -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn
 
 RUN cp dhis-web/dhis-web-portal/target/dhis.war /dhis.war
 
