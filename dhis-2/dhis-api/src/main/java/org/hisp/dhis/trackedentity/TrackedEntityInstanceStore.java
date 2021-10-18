@@ -44,6 +44,8 @@ public interface TrackedEntityInstanceStore
 {
     String ID = TrackedEntityInstanceStore.class.getName();
 
+    int countTrackedEntityInstances( TrackedEntityInstanceQueryParams params );
+
     List<TrackedEntityInstance> getTrackedEntityInstances( TrackedEntityInstanceQueryParams params );
 
     List<Long> getTrackedEntityInstanceIds( TrackedEntityInstanceQueryParams params );
