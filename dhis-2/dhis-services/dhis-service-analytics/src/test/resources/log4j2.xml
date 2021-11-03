@@ -9,6 +9,7 @@
 		</File>
 	</Appenders>
 	<Loggers>
+		<Logger name="org.springframework.context" level="debug" />
 		<Logger name="org.springframework.test.context" level="warn" />
 		<Logger name="org.springframework.test.context.TestContext" level="warn" />
 		<Logger name="org.springframework.test.context.TestContextManager" level="warn" />
@@ -19,6 +20,8 @@
 		<Logger name="org.springframework.test.context.web" level="warn" />
 		<!-- The following must be kept at DEBUG in order to test SPR-14363. -->
 		<Logger name="org.springframework.test.util" level="debug" />
+		<Logger name="org.hisp.dhis.analytics.data.ExecutionTimeTestExecutionListener" level="debug" />
+		<Logger name="org.hisp.dhis.BaseSpringTest" level="debug" />
 <!--
 		<Logger name="org.springframework.test.context.support" level="info" />
 		<Logger name="org.springframework.test.context.support.DelegatingSmartContextLoader" level="info" />

@@ -40,6 +40,8 @@ import org.hisp.dhis.external.conf.DhisConfigurationProvider;
 import org.hisp.dhis.utils.TestUtils;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -56,6 +58,8 @@ import org.springframework.transaction.support.TransactionTemplate;
 @Slf4j
 public abstract class BaseSpringTest extends DhisConvenienceTest implements ApplicationContextAware
 {
+    private static final Logger logger = LoggerFactory.getLogger( BaseSpringTest.class );
+
     public static final String ORG_HISP_DHIS_DATASOURCE_QUERY = "org.hisp.dhis.datasource.query";
 
     protected ApplicationContext applicationContext;
@@ -91,6 +95,7 @@ public abstract class BaseSpringTest extends DhisConvenienceTest implements Appl
         throws BeansException
     {
         this.applicationContext = applicationContext;
+        log.debug("ApplicationContext {}[{}] started at {}", applicationContext.getApplicationName(), applicationContext.getId(), applicationContext.getStartupDate());
     }
 
     @Autowired
