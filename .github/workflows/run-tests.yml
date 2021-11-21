@@ -44,16 +44,19 @@ jobs:
           distribution: zulu
           cache: maven
       - name: Download jars
+        id: download-jars
         uses: actions/download-artifact@v2
         with:
           name: jars
           path: jars
+      # THIS DOES NOT ECHO ANYTHING? WHY?
       - name: 'Echo download path'
+        run: echo ${{steps.download-jars.outputs.download-path}}
+      - name: 'ls download path'
         run: ls -R jars
-      # THIS DOES NOT ECHO ANYTHING
-        # run: echo ${{steps.download.outputs.download-path}}
       # - name: Install jars
       #   # TODO install all jars
+      #   working-directory: jars
       #   run: mvn install:install-file -Dfile *.jar
       # - name: Test core
       #   run: mvn test --batch-mode --no-transfer-progress --file ./dhis-2/pom.xml --projects -dhis-web-embedded-jetty
