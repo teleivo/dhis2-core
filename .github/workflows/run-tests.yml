@@ -2,16 +2,38 @@ name: Test
 env:
   # This is to make sure Maven don't timeout fetching dependencies. See: https://github.com/actions/virtual-environments/issues/1499
   MAVEN_OPTS: -Dhttp.keepAlive=false -Dmaven.wagon.http.pool=false -Dmaven.wagon.http.retryHandler.class=standard -Dmaven.wagon.http.retryHandler.count=3 -Dmaven.wagon.httpconnectionManager.ttlSeconds=125
-  # This is to quiet down maven logs on CI
-  MAVEN_CLI_OPTS: --batch-mode --no-transfer-progress
 
 on: [ pull_request ]
 concurrency:
     group: ${{ github.workflow}}-${{ github.ref }}
     cancel-in-progress: true
 jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up JDK 11
+        uses: actions/setup-java@v2
+        with:
+          java-version: 11
+          distribution: zulu
+          cache: maven
+      - name: Build
+        # Build everything (also jetty); do not run or compile tests that will
+        # be done in test jobs
+        run: mvn clean package --batch-mode --no-transfer-progress -DskipTests -Dmaven.test.skip=true --file ./dhis-2/pom.xml
+      - name: Upload jars
+        uses: actions/upload-artifact@v2
+        with:
+          name: jars
+          path: |
+            **/target/**/*.jar
+            !**/lib/**/*.jar
+          retention-days: 1
+
   unit-test:
     runs-on: ubuntu-latest
+    needs: build
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK 11
@@ -20,58 +42,15 @@ jobs:
           java-version: 11
           distribution: zulu
           cache: maven
-
-      - name: Test core
-        run: mvn clean install -Pdefault --update-snapshots -f ./dhis-2/pom.xml -pl -dhis-web-embedded-jetty
-
-      - name: Test dhis-web
-        run: mvn clean install -Pdefault --update-snapshots -f ./dhis-2/dhis-web/pom.xml
-
-  integration-test:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - name: Set up JDK 11
-        uses: actions/setup-java@v2
+      - name: Download jars
+        uses: actions/download-artifact@v2
         with:
-          java-version: 11
-          distribution: zulu
-          cache: maven
-
-      - name: Run integration tests
-        run: mvn --threads 1C clean install -Pintegration -DexcludeAnalyticsTests=true -f ./dhis-2/pom.xml -pl -dhis-web-embedded-jetty
-
-      - name: Archive surefire reports
-        uses: actions/upload-artifact@v2
-        with:
-          name: surefire-reports
-          path: "**/target/surefire-reports/TEST-*.xml"
-          retention-days: 10
-
-  integration-test-analytics:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - name: Set up JDK 11
-        uses: actions/setup-java@v2
-        with:
-          java-version: 11
-          distribution: zulu
-          cache: maven
-
-      - name: Build analytics with dependencies
-        env:
-          MAVEN_OPTS: -Dhttp.keepAlive=false -Dmaven.wagon.http.pool=false -Dmaven.wagon.http.retryHandler.class=standard -Dmaven.wagon.http.retryHandler.count=3 -Dmaven.wagon.httpconnectionManager.ttlSeconds=125
-        run: mvn --threads 2C clean install -DskipTests -Dmaven.tests.skip=true --batch-mode --no-transfer-progress -f dhis-2/pom.xml -pl=dhis-services/dhis-service-analytics/pom.xml --also-make
-
-      - name: Run analytics integration tests
-        env:
-          MAVEN_OPTS: -Dhttp.keepAlive=false -Dmaven.wagon.http.pool=false -Dmaven.wagon.http.retryHandler.class=standard -Dmaven.wagon.http.retryHandler.count=3 -Dmaven.wagon.httpconnectionManager.ttlSeconds=125
-        run: mvn test -Pintegration --batch-mode --no-transfer-progress -f ./dhis-2/dhis-services/dhis-service-analytics/pom.xml
-
-      - name: Archive surefire reports
-        uses: actions/upload-artifact@v2
-        with:
-          name: surefire-reports-analytics
-          path: "**/target/surefire-reports/TEST-*.xml"
-          retention-days: 10
+          name: jars
+          path: jars
+      - name: 'Echo download path'
+        run: echo ${{steps.download.outputs.download-path}}
+      # - name: Install jars
+      #   # TODO install all jars
+      #   run: mvn install:install-file -Dfile *.jar
+      # - name: Test core
+      #   run: mvn test --batch-mode --no-transfer-progress --file ./dhis-2/pom.xml --projects -dhis-web-embedded-jetty
