@@ -20,6 +20,8 @@ jobs:
           cache: maven
       - name: Build
         # TODO add formatting check in build step or own step
+        # TODO we create multiple wars, should we only upload dhis.war?
+        # TODO investigate if there are jars/wars which we should not upload
         # Build everything? also jetty?; do not run or compile tests that will
         # be done in test jobs
         run: mvn clean package --threads 1C --batch-mode --no-transfer-progress -DskipTests -Dmaven.test.skip=true --file ./dhis-2/pom.xml
@@ -29,6 +31,7 @@ jobs:
           name: jars
           path: |
             **/target/**/*.jar
+            **/target/**/dhis.war
             !**/lib/**/*.jar
           retention-days: 1
           if-no-files-found: error
@@ -50,14 +53,11 @@ jobs:
         with:
           name: jars
           path: jars
-      # THIS DOES NOT ECHO ANYTHING? WHY?
-      - name: 'Echo download path'
-        run: echo ${{steps.download-jars.outputs.download-path}}
       - name: 'ls download path'
         run: ls -R jars
-      # - name: Install jars
-      #   # TODO install all jars
-      #   working-directory: jars
-      #   run: mvn install:install-file -Dfile *.jar
+      - name: Install jars
+        # TODO install all jars
+        working-directory: jars
+        run: find . -type f -name "*.jar" -exec mvn install:install-file -Dfile={} -Dpackaging=jar \;
       # - name: Test core
       #   run: mvn test --batch-mode --no-transfer-progress --file ./dhis-2/pom.xml --projects -dhis-web-embedded-jetty
