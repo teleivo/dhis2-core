@@ -59,4 +59,4 @@ jobs:
         working-directory: jars
         run: find . -type f -name "*.jar" -exec mvn --batch-mode --no-transfer-progress org.apache.maven.plugins:maven-install-plugin:3.0.0-M1:install-file -Dfile={} \;
       - name: Test
-        run: mvn test --batch-mode --no-transfer-progress --file ./dhis-2/pom.xml --projects -dhis-web-embedded-jetty
+        run: mvn test --threads 1C --batch-mode --no-transfer-progress --file ./dhis-2/pom.xml --projects -dhis-web-embedded-jetty
