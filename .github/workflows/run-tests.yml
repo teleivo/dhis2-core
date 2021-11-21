@@ -22,7 +22,7 @@ jobs:
         # TODO add formatting check in build step or own step
         # Build everything? also jetty?; do not run or compile tests that will
         # be done in test jobs
-        run: mvn clean package --batch-mode --no-transfer-progress -DskipTests -Dmaven.test.skip=true --file ./dhis-2/pom.xml
+        run: mvn clean package --threads 1C --batch-mode --no-transfer-progress -DskipTests -Dmaven.test.skip=true --file ./dhis-2/pom.xml
       - name: Upload jars
         uses: actions/upload-artifact@v2
         with:
