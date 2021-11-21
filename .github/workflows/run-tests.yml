@@ -19,7 +19,8 @@ jobs:
           distribution: zulu
           cache: maven
       - name: Build
-        # Build everything (also jetty); do not run or compile tests that will
+        # TODO add formatting check in build step or own step
+        # Build everything? also jetty?; do not run or compile tests that will
         # be done in test jobs
         run: mvn clean package --batch-mode --no-transfer-progress -DskipTests -Dmaven.test.skip=true --file ./dhis-2/pom.xml
       - name: Upload jars
@@ -48,7 +49,9 @@ jobs:
           name: jars
           path: jars
       - name: 'Echo download path'
-        run: echo ${{steps.download.outputs.download-path}}
+        run: ls -R jars
+      # THIS DOES NOT ECHO ANYTHING
+        # run: echo ${{steps.download.outputs.download-path}}
       # - name: Install jars
       #   # TODO install all jars
       #   run: mvn install:install-file -Dfile *.jar
