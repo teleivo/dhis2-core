@@ -31,6 +31,7 @@ jobs:
             **/target/**/*.jar
             !**/lib/**/*.jar
           retention-days: 1
+          if-no-files-found: error
 
   unit-test:
     runs-on: ubuntu-latest
