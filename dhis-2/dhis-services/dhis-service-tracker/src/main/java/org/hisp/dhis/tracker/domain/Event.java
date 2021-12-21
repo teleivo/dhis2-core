@@ -33,6 +33,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.validation.constraints.NotNull;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -55,6 +57,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class Event
     implements TrackerDto
 {
+    @NotNull
     @JsonProperty
     private String event;
 
