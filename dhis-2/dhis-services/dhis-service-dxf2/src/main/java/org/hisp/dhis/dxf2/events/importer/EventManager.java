@@ -39,7 +39,6 @@ import static org.hisp.dhis.importexport.ImportStrategy.DELETE;
 import static org.hisp.dhis.importexport.ImportStrategy.UPDATE;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -60,7 +59,6 @@ import org.hisp.dhis.dxf2.importsummary.ImportSummary;
 import org.hisp.dhis.importexport.ImportStrategy;
 import org.hisp.dhis.program.Program;
 import org.hisp.dhis.program.ProgramStage;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 import com.google.common.collect.ImmutableList;
@@ -71,16 +69,13 @@ import com.google.common.collect.ImmutableList;
 public class EventManager
 {
     @NonNull
-    @Qualifier( "checkersRunOnInsert" )
-    private final List<Checker> checkersRunOnInsert;
+    private final List<InsertChecker> checkersRunOnInsert;
 
     @NonNull
-    @Qualifier( "checkersRunOnUpdate" )
-    private final List<Checker> checkersRunOnUpdate;
+    private final List<UpdateChecker> checkersRunOnUpdate;
 
     @NonNull
-    @Qualifier( "checkersRunOnDelete" )
-    private final List<Checker> checkersRunOnDelete;
+    private final List<DeleteChecker> checkersRunOnDelete;
 
     @NonNull
     private final Map<EventProcessorPhase, EventProcessorExecutor> executorsByPhase;

@@ -50,10 +50,13 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.hisp.dhis.dxf2.events.importer.Checker;
+import org.hisp.dhis.dxf2.events.importer.DeleteChecker;
 import org.hisp.dhis.dxf2.events.importer.EventProcessorExecutor;
 import org.hisp.dhis.dxf2.events.importer.EventProcessorPhase;
 import org.hisp.dhis.dxf2.events.importer.ImportStrategyUtils;
+import org.hisp.dhis.dxf2.events.importer.InsertChecker;
 import org.hisp.dhis.dxf2.events.importer.Processor;
+import org.hisp.dhis.dxf2.events.importer.UpdateChecker;
 import org.hisp.dhis.dxf2.events.importer.delete.postprocess.EventDeleteAuditPostProcessor;
 import org.hisp.dhis.dxf2.events.importer.delete.validation.DeleteProgramStageInstanceAclCheck;
 import org.hisp.dhis.dxf2.events.importer.insert.postprocess.EventInsertAuditPostProcessor;
@@ -250,59 +253,68 @@ public class ServiceConfig
      */
 
     @Bean
-    public List<Checker> checkersRunOnInsert()
+    public List<InsertChecker> checkersRunOnInsert()
     {
         return ImmutableList.of(
-            getCheckerByClass( EventDateCheck.class ),
-            getCheckerByClass( OrgUnitCheck.class ),
-            getCheckerByClass( SharedProgramCheck.class ),
-            getCheckerByClass( ProgramStageCheck.class ),
-            getCheckerByClass( TrackedEntityInstanceCheck.class ),
-            getCheckerByClass( ProgramInstanceCheck.class ),
-            getCheckerByClass( ProgramInstanceRepeatableStageCheck.class ),
-            getCheckerByClass( ProgramOrgUnitCheck.class ),
-            getCheckerByClass( EventGeometryCheck.class ),
-            getCheckerByClass( EventCreationAclCheck.class ),
-            getCheckerByClass( EventBaseCheck.class ),
-            getCheckerByClass( AttributeOptionComboCheck.class ),
-            getCheckerByClass( AttributeOptionComboDateCheck.class ),
-            getCheckerByClass( AttributeOptionComboAclCheck.class ),
-            getCheckerByClass( DataValueCheck.class ),
-            getCheckerByClass( FilteredDataValueCheck.class ),
-            getCheckerByClass( DataValueAclCheck.class ),
-            getCheckerByClass( ExpirationDaysCheck.class ) );
+            getInsertChecker( EventDateCheck.class ),
+            getInsertChecker( OrgUnitCheck.class ),
+            getInsertChecker( SharedProgramCheck.class ),
+            getInsertChecker( ProgramStageCheck.class ),
+            getInsertChecker( TrackedEntityInstanceCheck.class ),
+            getInsertChecker( ProgramInstanceCheck.class ),
+            getInsertChecker( ProgramInstanceRepeatableStageCheck.class ),
+            getInsertChecker( ProgramOrgUnitCheck.class ),
+            getInsertChecker( EventGeometryCheck.class ),
+            getInsertChecker( EventCreationAclCheck.class ),
+            getInsertChecker( EventBaseCheck.class ),
+            getInsertChecker( AttributeOptionComboCheck.class ),
+            getInsertChecker( AttributeOptionComboDateCheck.class ),
+            getInsertChecker( AttributeOptionComboAclCheck.class ),
+            getInsertChecker( DataValueCheck.class ),
+            getInsertChecker( FilteredDataValueCheck.class ),
+            getInsertChecker( DataValueAclCheck.class ),
+            getInsertChecker( ExpirationDaysCheck.class ) );
     }
 
     @Bean
-    public List<Checker> checkersRunOnUpdate()
+    public List<UpdateChecker> checkersRunOnUpdate()
     {
         return ImmutableList.of(
-            getCheckerByClass( EventSimpleCheck.class ),
-            getCheckerByClass( EventBaseCheck.class ),
-            getCheckerByClass( ProgramStageInstanceBasicCheck.class ),
-            getCheckerByClass( UpdateProgramStageInstanceAclCheck.class ),
-            getCheckerByClass( SharedProgramCheck.class ),
-            getCheckerByClass( ProgramInstanceCheck.class ),
-            getCheckerByClass( ProgramStageInstanceAuthCheck.class ),
-            getCheckerByClass( AttributeOptionComboCheck.class ),
-            getCheckerByClass( AttributeOptionComboDateCheck.class ),
-            getCheckerByClass( EventGeometryCheck.class ),
-            getCheckerByClass( DataValueCheck.class ),
-            getCheckerByClass( FilteredDataValueCheck.class ),
-            getCheckerByClass( ExpirationDaysCheck.class ) );
+            getUpdateChecker( EventSimpleCheck.class ),
+            getUpdateChecker( EventBaseCheck.class ),
+            getUpdateChecker( ProgramStageInstanceBasicCheck.class ),
+            getUpdateChecker( UpdateProgramStageInstanceAclCheck.class ),
+            getUpdateChecker( SharedProgramCheck.class ),
+            getUpdateChecker( ProgramInstanceCheck.class ),
+            getUpdateChecker( ProgramStageInstanceAuthCheck.class ),
+            getUpdateChecker( AttributeOptionComboCheck.class ),
+            getUpdateChecker( AttributeOptionComboDateCheck.class ),
+            getUpdateChecker( EventGeometryCheck.class ),
+            getUpdateChecker( DataValueCheck.class ),
+            getUpdateChecker( FilteredDataValueCheck.class ),
+            getUpdateChecker( ExpirationDaysCheck.class ) );
     }
 
     @Bean
-    public List<Checker> checkersRunOnDelete()
+    public List<DeleteChecker> checkersRunOnDelete()
     {
         return ImmutableList.of(
-            getCheckerByClass(
-                DeleteProgramStageInstanceAclCheck.class ) );
+            getDeleteChecker( DeleteProgramStageInstanceAclCheck.class ) );
     }
 
-    private Checker getCheckerByClass( Class<? extends Checker> checkerClass )
+    private InsertChecker getInsertChecker( Class<? extends InsertChecker> k )
     {
-        return getByClass( checkersByClass, checkerClass );
+        return (InsertChecker) checkersByClass.get( k );
+    }
+
+    private UpdateChecker getUpdateChecker( Class<? extends UpdateChecker> k )
+    {
+        return (UpdateChecker) checkersByClass.get( k );
+    }
+
+    private DeleteChecker getDeleteChecker( Class<? extends DeleteChecker> k )
+    {
+        return (DeleteChecker) checkersByClass.get( k );
     }
 
     private ValidationCheck getValidationCheckByClass( Class<? extends ValidationCheck> validationCheckClass )
