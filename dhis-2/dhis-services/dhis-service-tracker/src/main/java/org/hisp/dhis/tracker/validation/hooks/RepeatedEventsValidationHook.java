@@ -76,6 +76,9 @@ public class RepeatedEventsValidationHook
                 {
                     final ValidationErrorReporter reporter = new ValidationErrorReporter( context, event );
                     addError( reporter, TrackerErrorCode.E1039, mapEntry.getKey().getLeft() );
+                    // TODO(TECH-880) remove once every hook creates errors,
+                    // warnings as
+                    // highlighted below
                     rootReporter.merge( reporter );
                 }
             }
@@ -99,6 +102,8 @@ public class RepeatedEventsValidationHook
         {
             final ValidationErrorReporter reporter = new ValidationErrorReporter( context, event );
             addError( reporter, TrackerErrorCode.E1039, event.getProgramStage() );
+            // TODO(TECH-880) remove once every hook creates errors, warnings as
+            // highlighted below
             rootReporter.merge( reporter );
         }
     }

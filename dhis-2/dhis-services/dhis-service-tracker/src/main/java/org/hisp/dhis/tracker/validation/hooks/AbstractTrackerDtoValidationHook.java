@@ -167,7 +167,8 @@ public abstract class AbstractTrackerDtoValidationHook
             if ( needsToRun( context.getStrategy( dto ) ) )
             {
                 final ValidationErrorReporter reporter = validateTrackerDto( rootReporter, context, dto );
-                // TODO remove once every hook creates errors, warnings as
+                // TODO(TECH-880) remove once every hook creates errors,
+                // warnings as
                 // highlighted below
                 rootReporter.merge( reporter );
                 if ( removeOnError() && didNotPassValidation( reporter, dto.getUid() ) )
@@ -181,7 +182,8 @@ public abstract class AbstractTrackerDtoValidationHook
     private ValidationErrorReporter validateTrackerDto( ValidationErrorReporter rootReporter,
         TrackerImportValidationContext context, TrackerDto dto )
     {
-        // TODO this line shows that to remove the merging logic we need to let
+        // TODO(TECH-880) this line shows that to remove the merging logic we
+        // need to let
         // hooks create errors
         // this requires them to pass in the TrackerType, the uid and the
         // TrackerBundle
