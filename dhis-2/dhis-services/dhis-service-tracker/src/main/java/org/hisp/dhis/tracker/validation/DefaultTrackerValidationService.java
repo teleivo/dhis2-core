@@ -87,7 +87,10 @@ public class DefaultTrackerValidationService
         // Note that the bundle gets cloned internally, so the original bundle
         // is always available
         TrackerImportValidationContext context = new TrackerImportValidationContext( bundle );
-        ValidationErrorReporter reporter = ValidationErrorReporter.emptyReporter();
+        // TODO(TECH-880) remove reliance on context from reporter, then context
+        // altogether.
+        // the bundle is probably enough
+        ValidationErrorReporter reporter = new ValidationErrorReporter( context );
 
         try
         {
@@ -104,8 +107,9 @@ public class DefaultTrackerValidationService
         }
         catch ( ValidationFailFastException e )
         {
-            validationReport.add( e.getErrors() );
+            // exit early when in FAIL_FAST validation mode
         }
+        validationReport.add( reporter.getReportList() );
 
         removeInvalidObjects( bundle, reporter );
 
