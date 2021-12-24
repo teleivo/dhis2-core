@@ -106,8 +106,10 @@ class EventDataValuesValidationHookTest
         when( event.getStatus() ).thenReturn( EventStatus.SKIPPED );
 
         when( validationContext.getBundle() ).thenReturn( TrackerBundle.builder().build() );
-        when( validationContext.getDataElement( dataElementUid ) ).thenReturn( dataElement );
-        when( validationContext.getProgramStage( anyString() ) ).thenReturn( programStage );
+        when( validationContext.getBundle().getPreheat().<DataElement> get( DataElement.class, dataElementUid ) )
+            .thenReturn( dataElement );
+        when( validationContext.getBundle().getPreheat().<ProgramStage> get( ProgramStage.class, anyString() ) )
+            .thenReturn( programStage );
         DataElement dataElement = new DataElement();
         dataElement.setUid( dataElementUid );
 
@@ -169,7 +171,8 @@ class EventDataValuesValidationHookTest
 
         // When
         when( event.getDataValues() ).thenReturn( Sets.newHashSet( validDataValue ) );
-        when( validationContext.getDataElement( dataElementUid ) ).thenReturn( null );
+        when( validationContext.getBundle().getPreheat().<DataElement> get( DataElement.class, dataElementUid ) )
+            .thenReturn( null );
 
         ValidationErrorReporter reporter = new ValidationErrorReporter( validationContext );
         hookToTest.validateEvent( reporter, event );
@@ -201,7 +204,8 @@ class EventDataValuesValidationHookTest
         when( event.getDataValues() ).thenReturn( Sets.newHashSet( getDataValue() ) );
         when( event.getProgramStage() ).thenReturn( "PROGRAM_STAGE" );
         when( event.getStatus() ).thenReturn( EventStatus.COMPLETED );
-        when( validationContext.getProgramStage( "PROGRAM_STAGE" ) ).thenReturn( programStage );
+        when( validationContext.getBundle().getPreheat().<ProgramStage> get( ProgramStage.class, "PROGRAM_STAGE" ) )
+            .thenReturn( programStage );
 
         // When
         ValidationErrorReporter reporter = new ValidationErrorReporter( validationContext );
@@ -233,7 +237,8 @@ class EventDataValuesValidationHookTest
         when( event.getDataValues() ).thenReturn( Sets.newHashSet( getDataValue() ) );
         when( event.getProgramStage() ).thenReturn( "PROGRAM_STAGE" );
         when( event.getStatus() ).thenReturn( EventStatus.ACTIVE );
-        when( validationContext.getProgramStage( "PROGRAM_STAGE" ) ).thenReturn( programStage );
+        when( validationContext.getBundle().getPreheat().<ProgramStage> get( ProgramStage.class, "PROGRAM_STAGE" ) )
+            .thenReturn( programStage );
 
         // When
         ValidationErrorReporter reporter = new ValidationErrorReporter( validationContext );
@@ -265,9 +270,11 @@ class EventDataValuesValidationHookTest
         when( event.getDataValues() ).thenReturn( Sets.newHashSet( getDataValue(), notPresentDataValue ) );
         when( event.getProgramStage() ).thenReturn( "PROGRAM_STAGE" );
         when( event.getStatus() ).thenReturn( EventStatus.ACTIVE );
-        when( validationContext.getProgramStage( "PROGRAM_STAGE" ) ).thenReturn( programStage );
-        when( validationContext.getDataElement( "de_not_present_in_progam_stage" ) )
-            .thenReturn( notPresentDataElement );
+        when( validationContext.getBundle().getPreheat().<ProgramStage> get( ProgramStage.class, "PROGRAM_STAGE" ) )
+            .thenReturn( programStage );
+        when( validationContext.getBundle().getPreheat().<DataElement> get( DataElement.class,
+            "de_not_present_in_progam_stage" ) )
+                .thenReturn( notPresentDataElement );
 
         // When
         ValidationErrorReporter reporter = new ValidationErrorReporter( validationContext );
@@ -288,7 +295,8 @@ class EventDataValuesValidationHookTest
         invalidDataElement.setUid( dataElementUid );
         invalidDataElement.setValueType( null );
 
-        when( validationContext.getDataElement( dataElementUid ) ).thenReturn( invalidDataElement );
+        when( validationContext.getBundle().getPreheat().<DataElement> get( DataElement.class, dataElementUid ) )
+            .thenReturn( invalidDataElement );
         when( event.getDataValues() ).thenReturn( Sets.newHashSet( validDataValue ) );
 
         // When
@@ -311,8 +319,10 @@ class EventDataValuesValidationHookTest
         validDataElement.setUid( validDataValue.getDataElement() );
         validDataElement.setValueType( ValueType.FILE_RESOURCE );
 
-        when( validationContext.getDataElement( validDataValue.getDataElement() ) ).thenReturn( validDataElement );
-        when( validationContext.getFileResource( validDataValue.getDataElement() ) ).thenReturn( null );
+        when( validationContext.getBundle().getPreheat().<DataElement> get( DataElement.class,
+            validDataValue.getDataElement() ) ).thenReturn( validDataElement );
+        when( validationContext.getBundle().getPreheat().<FileResource> get( FileResource.class,
+            validDataValue.getDataElement() ) ).thenReturn( null );
         when( event.getDataValues() ).thenReturn( Sets.newHashSet( validDataValue ) );
 
         // When
@@ -336,11 +346,13 @@ class EventDataValuesValidationHookTest
         validDataElement.setValueType( ValueType.FILE_RESOURCE );
 
         ProgramStage programStage = getProgramStage( validDataElement, programStageUid, false );
-        when( validationContext.getProgramStage( event.getProgramStage() ) ).thenReturn( programStage );
+        when( validationContext.getBundle().getPreheat().<ProgramStage> get( ProgramStage.class,
+            event.getProgramStage() ) ).thenReturn( programStage );
 
         when( event.getDataValues() ).thenReturn( Sets.newHashSet( validDataValue ) );
         when( event.getStatus() ).thenReturn( EventStatus.COMPLETED );
-        when( validationContext.getDataElement( validDataValue.getDataElement() ) ).thenReturn( validDataElement );
+        when( validationContext.getBundle().getPreheat().<DataElement> get( DataElement.class,
+            validDataValue.getDataElement() ) ).thenReturn( validDataElement );
 
         // When
         ValidationErrorReporter reporter = new ValidationErrorReporter( validationContext );
@@ -369,8 +381,10 @@ class EventDataValuesValidationHookTest
         when( event.getProgramStage() ).thenReturn( programStageUid );
 
         when( event.getStatus() ).thenReturn( EventStatus.COMPLETED );
-        when( validationContext.getDataElement( validDataValue.getDataElement() ) ).thenReturn( validDataElement );
-        when( validationContext.getProgramStage( event.getProgramStage() ) ).thenReturn( programStage );
+        when( validationContext.getBundle().getPreheat().<DataElement> get( DataElement.class,
+            validDataValue.getDataElement() ) ).thenReturn( validDataElement );
+        when( validationContext.getBundle().getPreheat().<ProgramStage> get( ProgramStage.class,
+            event.getProgramStage() ) ).thenReturn( programStage );
 
         // When
         ValidationErrorReporter reporter = new ValidationErrorReporter( validationContext );
@@ -399,8 +413,10 @@ class EventDataValuesValidationHookTest
         programStage.setValidationStrategy( ValidationStrategy.ON_UPDATE_AND_INSERT );
         when( event.getDataValues() ).thenReturn( Sets.newHashSet( validDataValue ) );
         when( event.getProgramStage() ).thenReturn( programStageUid );
-        when( validationContext.getDataElement( validDataValue.getDataElement() ) ).thenReturn( validDataElement );
-        when( validationContext.getProgramStage( event.getProgramStage() ) ).thenReturn( programStage );
+        when( validationContext.getBundle().getPreheat().<DataElement> get( DataElement.class,
+            validDataValue.getDataElement() ) ).thenReturn( validDataElement );
+        when( validationContext.getBundle().getPreheat().<ProgramStage> get( ProgramStage.class,
+            event.getProgramStage() ) ).thenReturn( programStage );
 
         when( event.getStatus() ).thenReturn( EventStatus.ACTIVE );
 
@@ -441,8 +457,10 @@ class EventDataValuesValidationHookTest
 
         when( event.getDataValues() ).thenReturn( Sets.newHashSet( validDataValue ) );
         when( event.getProgramStage() ).thenReturn( programStageUid );
-        when( validationContext.getDataElement( validDataValue.getDataElement() ) ).thenReturn( validDataElement );
-        when( validationContext.getProgramStage( event.getProgramStage() ) ).thenReturn( programStage );
+        when( validationContext.getBundle().getPreheat().<DataElement> get( DataElement.class,
+            validDataValue.getDataElement() ) ).thenReturn( validDataElement );
+        when( validationContext.getBundle().getPreheat().<ProgramStage> get( ProgramStage.class,
+            event.getProgramStage() ) ).thenReturn( programStage );
         when( event.getStatus() ).thenReturn( EventStatus.ACTIVE );
 
         // When
@@ -480,8 +498,10 @@ class EventDataValuesValidationHookTest
 
         when( event.getDataValues() ).thenReturn( Sets.newHashSet( validDataValue ) );
         when( event.getProgramStage() ).thenReturn( programStageUid );
-        when( validationContext.getDataElement( validDataValue.getDataElement() ) ).thenReturn( validDataElement );
-        when( validationContext.getProgramStage( event.getProgramStage() ) ).thenReturn( programStage );
+        when( validationContext.getBundle().getPreheat().<DataElement> get( DataElement.class,
+            validDataValue.getDataElement() ) ).thenReturn( validDataElement );
+        when( validationContext.getBundle().getPreheat().<ProgramStage> get( ProgramStage.class,
+            event.getProgramStage() ) ).thenReturn( programStage );
         when( event.getStatus() ).thenReturn( EventStatus.SCHEDULE );
 
         // When
@@ -518,9 +538,12 @@ class EventDataValuesValidationHookTest
 
         when( event.getDataValues() ).thenReturn( Sets.newHashSet( validDataValue ) );
         when( event.getProgramStage() ).thenReturn( programStageUid );
-        when( validationContext.getDataElement( validDataValue.getDataElement() ) ).thenReturn( validDataElement );
-        when( validationContext.getFileResource( validDataValue.getDataElement() ) ).thenReturn( null );
-        when( validationContext.getProgramStage( event.getProgramStage() ) ).thenReturn( programStage );
+        when( validationContext.getBundle().getPreheat().<DataElement> get( DataElement.class,
+            validDataValue.getDataElement() ) ).thenReturn( validDataElement );
+        when( validationContext.getBundle().getPreheat().<FileResource> get( FileResource.class,
+            validDataValue.getDataElement() ) ).thenReturn( null );
+        when( validationContext.getBundle().getPreheat().<ProgramStage> get( ProgramStage.class,
+            event.getProgramStage() ) ).thenReturn( programStage );
         when( event.getStatus() ).thenReturn( EventStatus.COMPLETED );
 
         // When
@@ -545,8 +568,10 @@ class EventDataValuesValidationHookTest
         FileResource fileResource = new FileResource();
         fileResource.setAssigned( true );
 
-        when( validationContext.getDataElement( validDataValue.getDataElement() ) ).thenReturn( validDataElement );
-        when( validationContext.getFileResource( validDataValue.getValue() ) ).thenReturn( fileResource );
+        when( validationContext.getBundle().getPreheat().<DataElement> get( DataElement.class,
+            validDataValue.getDataElement() ) ).thenReturn( validDataElement );
+        when( validationContext.getBundle().getPreheat().<FileResource> get( FileResource.class,
+            validDataValue.getValue() ) ).thenReturn( fileResource );
         when( event.getDataValues() ).thenReturn( Sets.newHashSet( validDataValue ) );
 
         // When
@@ -601,7 +626,8 @@ class EventDataValuesValidationHookTest
 
         dataElement.setOptionSet( optionSet );
 
-        when( validationContext.getDataElement( dataElementUid ) ).thenReturn( dataElement );
+        when( validationContext.getBundle().getPreheat().<DataElement> get( DataElement.class, dataElementUid ) )
+            .thenReturn( dataElement );
         when( event.getDataValues() ).thenReturn( Sets.newHashSet( validDataValue, nullDataValue ) );
 
         ValidationErrorReporter reporter = new ValidationErrorReporter( validationContext );
@@ -633,7 +659,8 @@ class EventDataValuesValidationHookTest
 
         dataElement.setOptionSet( optionSet );
 
-        when( validationContext.getDataElement( dataElementUid ) ).thenReturn( dataElement );
+        when( validationContext.getBundle().getPreheat().<DataElement> get( DataElement.class, dataElementUid ) )
+            .thenReturn( dataElement );
         when( event.getDataValues() ).thenReturn( Sets.newHashSet( validDataValue ) );
 
         ValidationErrorReporter reporter = new ValidationErrorReporter( validationContext );
@@ -656,7 +683,8 @@ class EventDataValuesValidationHookTest
         invalidDataElement.setUid( dataElementUid );
         invalidDataElement.setValueType( valueType );
 
-        when( validationContext.getDataElement( dataElementUid ) ).thenReturn( invalidDataElement );
+        when( validationContext.getBundle().getPreheat().<DataElement> get( DataElement.class, dataElementUid ) )
+            .thenReturn( invalidDataElement );
         when( event.getDataValues() ).thenReturn( Sets.newHashSet( validDataValue ) );
 
         // When

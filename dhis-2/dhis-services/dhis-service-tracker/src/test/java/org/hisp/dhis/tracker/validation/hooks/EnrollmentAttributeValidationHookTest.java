@@ -110,10 +110,13 @@ class EnrollmentAttributeValidationHookTest
             false );
         trackedEntityAttribute1.setUid( trackedAttribute1 );
 
-        when( validationContext.getProgram( anyString() ) ).thenReturn( program );
+        when( validationContext.getBundle().getPreheat().<Program> get( Program.class, anyString() ) )
+            .thenReturn( program );
         when( enrollment.getProgram() ).thenReturn( "program" );
-        when( validationContext.getTrackedEntityAttribute( trackedAttribute ) ).thenReturn( trackedEntityAttribute );
-        when( validationContext.getTrackedEntityAttribute( trackedAttribute1 ) ).thenReturn( trackedEntityAttribute1 );
+        when( validationContext.getBundle().getPreheat().<TrackedEntityAttribute> get( TrackedEntityAttribute.class,
+            trackedAttribute ) ).thenReturn( trackedEntityAttribute );
+        when( validationContext.getBundle().getPreheat().<TrackedEntityAttribute> get( TrackedEntityAttribute.class,
+            trackedAttribute1 ) ).thenReturn( trackedEntityAttribute1 );
 
         String uid = CodeGenerator.generateUid();
         when( enrollment.getUid() ).thenReturn( uid );

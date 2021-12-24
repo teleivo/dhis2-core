@@ -99,12 +99,14 @@ public class PreCheckDataRelationsValidationHook
     {
         TrackerImportValidationContext context = reporter.getValidationContext();
 
-        Program program = context.getProgram( enrollment.getProgram() );
-        OrganisationUnit organisationUnit = context.getOrganisationUnit( enrollment.getOrgUnit() );
+        Program program = context.getBundle().getPreheat().get( Program.class, enrollment.getProgram() );
+        OrganisationUnit organisationUnit = context.getBundle().getPreheat().get( OrganisationUnit.class,
+            enrollment.getOrgUnit() );
 
         addErrorIf( () -> !program.isRegistration(), reporter, ENROLLMENT, enrollment.getUid(), E1014, program );
 
-        if ( !programHasOrgUnit( program, organisationUnit, context.getProgramWithOrgUnitsMap() ) )
+        if ( !programHasOrgUnit( program, organisationUnit,
+            context.getBundle().getPreheat().getProgramWithOrgUnitsMap() ) )
         {
             addError( reporter, ENROLLMENT, enrollment.getUid(), E1041, organisationUnit, program );
         }
@@ -122,9 +124,10 @@ public class PreCheckDataRelationsValidationHook
     {
         TrackerImportValidationContext context = reporter.getValidationContext();
 
-        ProgramStage programStage = context.getProgramStage( event.getProgramStage() );
-        OrganisationUnit organisationUnit = context.getOrganisationUnit( event.getOrgUnit() );
-        Program program = context.getProgram( event.getProgram() );
+        ProgramStage programStage = context.getBundle().getPreheat().get( ProgramStage.class, event.getProgramStage() );
+        OrganisationUnit organisationUnit = context.getBundle().getPreheat().get( OrganisationUnit.class,
+            event.getOrgUnit() );
+        Program program = context.getBundle().getPreheat().get( Program.class, event.getProgram() );
 
         if ( !program.getUid().equals( programStage.getProgram().getUid() ) )
         {
@@ -148,7 +151,8 @@ public class PreCheckDataRelationsValidationHook
             }
         }
 
-        if ( !programHasOrgUnit( program, organisationUnit, context.getProgramWithOrgUnitsMap() ) )
+        if ( !programHasOrgUnit( program, organisationUnit,
+            context.getBundle().getPreheat().getProgramWithOrgUnitsMap() ) )
         {
             addError( reporter, EVENT, event.getUid(), E1029, organisationUnit, program );
         }
@@ -210,7 +214,8 @@ public class PreCheckDataRelationsValidationHook
 
         if ( !optionComboIsEmpty && categoryOptionsIsEmpty )
         {
-            categoryOptionCombo = context.getCategoryOptionCombo( event.getAttributeOptionCombo() );
+            categoryOptionCombo = context.getBundle().getPreheat().get( CategoryOptionCombo.class,
+                event.getAttributeOptionCombo() );
         }
         else if ( !optionComboIsEmpty && program.getCategoryCombo() != null )
         {
@@ -243,7 +248,8 @@ public class PreCheckDataRelationsValidationHook
 
         if ( cachedEventAOCProgramCC.isPresent() )
         {
-            categoryOptionCombo = context.getCategoryOptionCombo( cachedEventAOCProgramCC.get() );
+            categoryOptionCombo = context.getBundle().getPreheat().get( CategoryOptionCombo.class,
+                cachedEventAOCProgramCC.get() );
         }
         else
         {
@@ -291,7 +297,8 @@ public class PreCheckDataRelationsValidationHook
 
         for ( String uid : attributeCategoryOptions )
         {
-            CategoryOption categoryOption = reporter.getValidationContext().getCategoryOption( uid );
+            CategoryOption categoryOption = reporter.getValidationContext().getBundle().getPreheat()
+                .get( CategoryOption.class, uid );
             if ( categoryOption == null )
             {
                 addError( reporter, EVENT, eventUid, E1116, uid );
@@ -322,14 +329,16 @@ public class PreCheckDataRelationsValidationHook
     private String getEnrollmentProgramUidFromEvent( TrackerImportValidationContext context,
         Event event )
     {
-        ProgramInstance programInstance = context.getProgramInstance( event.getEnrollment() );
+        ProgramInstance programInstance = context.getBundle().getPreheat()
+            .getEnrollment( context.getBundle().getIdentifier(), event.getEnrollment() );
         if ( programInstance != null )
         {
             return programInstance.getProgram().getUid();
         }
         else
         {
-            final Optional<ReferenceTrackerEntity> reference = context.getReference( event.getEnrollment() );
+            final Optional<ReferenceTrackerEntity> reference = context.getBundle().getPreheat()
+                .getReference( event.getEnrollment() );
             if ( reference.isPresent() )
             {
                 final Optional<Enrollment> enrollment = context.getBundle()
@@ -346,15 +355,16 @@ public class PreCheckDataRelationsValidationHook
     private String getTrackedEntityTypeUidFromEnrollment( TrackerImportValidationContext context,
         Enrollment enrollment )
     {
-        final TrackedEntityInstance trackedEntityInstance = context
-            .getTrackedEntityInstance( enrollment.getTrackedEntity() );
+        final TrackedEntityInstance trackedEntityInstance = context.getBundle().getPreheat()
+            .getTrackedEntity( context.getBundle().getIdentifier(), enrollment.getTrackedEntity() );
         if ( trackedEntityInstance != null )
         {
             return trackedEntityInstance.getTrackedEntityType().getUid();
         }
         else
         {
-            final Optional<ReferenceTrackerEntity> reference = context.getReference( enrollment.getTrackedEntity() );
+            final Optional<ReferenceTrackerEntity> reference = context.getBundle().getPreheat()
+                .getReference( enrollment.getTrackedEntity() );
             if ( reference.isPresent() )
             {
                 final Optional<TrackedEntity> tei = context.getBundle()

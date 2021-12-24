@@ -62,6 +62,7 @@ import org.hisp.dhis.tracker.bundle.TrackerBundle;
 import org.hisp.dhis.tracker.domain.Enrollment;
 import org.hisp.dhis.tracker.domain.Event;
 import org.hisp.dhis.tracker.domain.TrackedEntity;
+import org.hisp.dhis.tracker.domain.TrackerDto;
 import org.hisp.dhis.tracker.preheat.TrackerPreheat;
 import org.hisp.dhis.tracker.report.ValidationErrorReporter;
 import org.hisp.dhis.tracker.validation.TrackerImportValidationContext;
@@ -156,9 +157,12 @@ class PreCheckSecurityOwnershipValidationHookTest extends DhisConvenienceTest
             .orgUnit( ORG_UNIT_ID )
             .trackedEntityType( TEI_TYPE_ID )
             .build();
-        when( ctx.getOrganisationUnit( ORG_UNIT_ID ) ).thenReturn( organisationUnit );
-        when( ctx.getTrackedEntityType( TEI_TYPE_ID ) ).thenReturn( trackedEntityType );
-        when( ctx.getStrategy( trackedEntity ) ).thenReturn( TrackerImportStrategy.CREATE_AND_UPDATE );
+        when( ctx.getBundle().getPreheat().<OrganisationUnit> get( OrganisationUnit.class, ORG_UNIT_ID ) )
+            .thenReturn( organisationUnit );
+        when( ctx.getBundle().getPreheat().<TrackedEntityType> get( TrackedEntityType.class, TEI_TYPE_ID ) )
+            .thenReturn( trackedEntityType );
+        when( ctx.getBundle().getResolvedStrategyMap().get( ((TrackerDto) trackedEntity).getTrackerType() )
+            .get( ((TrackerDto) trackedEntity).getUid() ) ).thenReturn( TrackerImportStrategy.CREATE_AND_UPDATE );
         when( organisationUnitService.isInUserSearchHierarchyCached( user, organisationUnit ) )
             .thenReturn( true );
         when( aclService.canDataWrite( user, trackedEntityType ) ).thenReturn( true );
@@ -177,10 +181,14 @@ class PreCheckSecurityOwnershipValidationHookTest extends DhisConvenienceTest
             .orgUnit( ORG_UNIT_ID )
             .trackedEntityType( TEI_TYPE_ID )
             .build();
-        when( ctx.getOrganisationUnit( ORG_UNIT_ID ) ).thenReturn( organisationUnit );
-        when( ctx.getTrackedEntityType( TEI_TYPE_ID ) ).thenReturn( trackedEntityType );
-        when( ctx.getStrategy( trackedEntity ) ).thenReturn( TrackerImportStrategy.DELETE );
-        when( ctx.getTrackedEntityInstance( TEI_ID ) ).thenReturn( getTEIWithNoProgramInstances() );
+        when( ctx.getBundle().getPreheat().<OrganisationUnit> get( OrganisationUnit.class, ORG_UNIT_ID ) )
+            .thenReturn( organisationUnit );
+        when( ctx.getBundle().getPreheat().<TrackedEntityType> get( TrackedEntityType.class, TEI_TYPE_ID ) )
+            .thenReturn( trackedEntityType );
+        when( ctx.getBundle().getResolvedStrategyMap().get( ((TrackerDto) trackedEntity).getTrackerType() )
+            .get( ((TrackerDto) trackedEntity).getUid() ) ).thenReturn( TrackerImportStrategy.DELETE );
+        when( ctx.getBundle().getPreheat().getTrackedEntity( ctx.getBundle().getIdentifier(), TEI_ID ) )
+            .thenReturn( getTEIWithNoProgramInstances() );
         when( organisationUnitService.isInUserHierarchyCached( user, organisationUnit ) )
             .thenReturn( true );
         when( aclService.canDataWrite( user, trackedEntityType ) ).thenReturn( true );
@@ -199,10 +207,14 @@ class PreCheckSecurityOwnershipValidationHookTest extends DhisConvenienceTest
             .orgUnit( ORG_UNIT_ID )
             .trackedEntityType( TEI_TYPE_ID )
             .build();
-        when( ctx.getOrganisationUnit( ORG_UNIT_ID ) ).thenReturn( organisationUnit );
-        when( ctx.getTrackedEntityType( TEI_TYPE_ID ) ).thenReturn( trackedEntityType );
-        when( ctx.getStrategy( trackedEntity ) ).thenReturn( TrackerImportStrategy.CREATE );
-        when( ctx.getOrganisationUnit( ORG_UNIT_ID ) ).thenReturn( organisationUnit );
+        when( ctx.getBundle().getPreheat().<OrganisationUnit> get( OrganisationUnit.class, ORG_UNIT_ID ) )
+            .thenReturn( organisationUnit );
+        when( ctx.getBundle().getPreheat().<TrackedEntityType> get( TrackedEntityType.class, TEI_TYPE_ID ) )
+            .thenReturn( trackedEntityType );
+        when( ctx.getBundle().getResolvedStrategyMap().get( ((TrackerDto) trackedEntity).getTrackerType() )
+            .get( ((TrackerDto) trackedEntity).getUid() ) ).thenReturn( TrackerImportStrategy.CREATE );
+        when( ctx.getBundle().getPreheat().<OrganisationUnit> get( OrganisationUnit.class, ORG_UNIT_ID ) )
+            .thenReturn( organisationUnit );
         when( organisationUnitService.isInUserHierarchyCached( user, organisationUnit ) )
             .thenReturn( true );
         when( aclService.canDataWrite( user, trackedEntityType ) ).thenReturn( true );
@@ -221,10 +233,14 @@ class PreCheckSecurityOwnershipValidationHookTest extends DhisConvenienceTest
             .orgUnit( ORG_UNIT_ID )
             .trackedEntityType( TEI_TYPE_ID )
             .build();
-        when( ctx.getOrganisationUnit( ORG_UNIT_ID ) ).thenReturn( organisationUnit );
-        when( ctx.getTrackedEntityType( TEI_TYPE_ID ) ).thenReturn( trackedEntityType );
-        when( ctx.getStrategy( trackedEntity ) ).thenReturn( TrackerImportStrategy.CREATE_AND_UPDATE );
-        when( ctx.getOrganisationUnit( ORG_UNIT_ID ) ).thenReturn( organisationUnit );
+        when( ctx.getBundle().getPreheat().<OrganisationUnit> get( OrganisationUnit.class, ORG_UNIT_ID ) )
+            .thenReturn( organisationUnit );
+        when( ctx.getBundle().getPreheat().<TrackedEntityType> get( TrackedEntityType.class, TEI_TYPE_ID ) )
+            .thenReturn( trackedEntityType );
+        when( ctx.getBundle().getResolvedStrategyMap().get( ((TrackerDto) trackedEntity).getTrackerType() )
+            .get( ((TrackerDto) trackedEntity).getUid() ) ).thenReturn( TrackerImportStrategy.CREATE_AND_UPDATE );
+        when( ctx.getBundle().getPreheat().<OrganisationUnit> get( OrganisationUnit.class, ORG_UNIT_ID ) )
+            .thenReturn( organisationUnit );
         when( organisationUnitService.isInUserSearchHierarchyCached( user, organisationUnit ) )
             .thenReturn( true );
         when( aclService.canDataWrite( user, trackedEntityType ) ).thenReturn( true );
@@ -243,11 +259,16 @@ class PreCheckSecurityOwnershipValidationHookTest extends DhisConvenienceTest
             .orgUnit( ORG_UNIT_ID )
             .trackedEntityType( TEI_TYPE_ID )
             .build();
-        when( ctx.getOrganisationUnit( ORG_UNIT_ID ) ).thenReturn( organisationUnit );
-        when( ctx.getTrackedEntityType( TEI_TYPE_ID ) ).thenReturn( trackedEntityType );
-        when( ctx.getStrategy( trackedEntity ) ).thenReturn( TrackerImportStrategy.DELETE );
-        when( ctx.getTrackedEntityInstance( TEI_ID ) ).thenReturn( getTEIWithNoProgramInstances() );
-        when( ctx.getOrganisationUnit( ORG_UNIT_ID ) ).thenReturn( organisationUnit );
+        when( ctx.getBundle().getPreheat().<OrganisationUnit> get( OrganisationUnit.class, ORG_UNIT_ID ) )
+            .thenReturn( organisationUnit );
+        when( ctx.getBundle().getPreheat().<TrackedEntityType> get( TrackedEntityType.class, TEI_TYPE_ID ) )
+            .thenReturn( trackedEntityType );
+        when( ctx.getBundle().getResolvedStrategyMap().get( ((TrackerDto) trackedEntity).getTrackerType() )
+            .get( ((TrackerDto) trackedEntity).getUid() ) ).thenReturn( TrackerImportStrategy.DELETE );
+        when( ctx.getBundle().getPreheat().getTrackedEntity( ctx.getBundle().getIdentifier(), TEI_ID ) )
+            .thenReturn( getTEIWithNoProgramInstances() );
+        when( ctx.getBundle().getPreheat().<OrganisationUnit> get( OrganisationUnit.class, ORG_UNIT_ID ) )
+            .thenReturn( organisationUnit );
         when( organisationUnitService.isInUserHierarchyCached( user, organisationUnit ) )
             .thenReturn( true );
         when( aclService.canDataWrite( user, trackedEntityType ) ).thenReturn( true );
@@ -266,10 +287,14 @@ class PreCheckSecurityOwnershipValidationHookTest extends DhisConvenienceTest
             .orgUnit( ORG_UNIT_ID )
             .trackedEntityType( TEI_TYPE_ID )
             .build();
-        when( ctx.getOrganisationUnit( ORG_UNIT_ID ) ).thenReturn( organisationUnit );
-        when( ctx.getTrackedEntityType( TEI_TYPE_ID ) ).thenReturn( trackedEntityType );
-        when( ctx.getStrategy( trackedEntity ) ).thenReturn( TrackerImportStrategy.DELETE );
-        when( ctx.getTrackedEntityInstance( TEI_ID ) ).thenReturn( getTEIWithDeleteProgramInstances() );
+        when( ctx.getBundle().getPreheat().<OrganisationUnit> get( OrganisationUnit.class, ORG_UNIT_ID ) )
+            .thenReturn( organisationUnit );
+        when( ctx.getBundle().getPreheat().<TrackedEntityType> get( TrackedEntityType.class, TEI_TYPE_ID ) )
+            .thenReturn( trackedEntityType );
+        when( ctx.getBundle().getResolvedStrategyMap().get( ((TrackerDto) trackedEntity).getTrackerType() )
+            .get( ((TrackerDto) trackedEntity).getUid() ) ).thenReturn( TrackerImportStrategy.DELETE );
+        when( ctx.getBundle().getPreheat().getTrackedEntity( ctx.getBundle().getIdentifier(), TEI_ID ) )
+            .thenReturn( getTEIWithDeleteProgramInstances() );
         when( organisationUnitService.isInUserHierarchyCached( user, organisationUnit ) )
             .thenReturn( true );
         when( aclService.canDataWrite( user, trackedEntityType ) ).thenReturn( true );
@@ -288,10 +313,14 @@ class PreCheckSecurityOwnershipValidationHookTest extends DhisConvenienceTest
             .orgUnit( ORG_UNIT_ID )
             .trackedEntityType( TEI_TYPE_ID )
             .build();
-        when( ctx.getOrganisationUnit( ORG_UNIT_ID ) ).thenReturn( organisationUnit );
-        when( ctx.getTrackedEntityType( TEI_TYPE_ID ) ).thenReturn( trackedEntityType );
-        when( ctx.getStrategy( trackedEntity ) ).thenReturn( TrackerImportStrategy.DELETE );
-        when( ctx.getTrackedEntityInstance( TEI_ID ) ).thenReturn( getTEIWithProgramInstances() );
+        when( ctx.getBundle().getPreheat().<OrganisationUnit> get( OrganisationUnit.class, ORG_UNIT_ID ) )
+            .thenReturn( organisationUnit );
+        when( ctx.getBundle().getPreheat().<TrackedEntityType> get( TrackedEntityType.class, TEI_TYPE_ID ) )
+            .thenReturn( trackedEntityType );
+        when( ctx.getBundle().getResolvedStrategyMap().get( ((TrackerDto) trackedEntity).getTrackerType() )
+            .get( ((TrackerDto) trackedEntity).getUid() ) ).thenReturn( TrackerImportStrategy.DELETE );
+        when( ctx.getBundle().getPreheat().getTrackedEntity( ctx.getBundle().getIdentifier(), TEI_ID ) )
+            .thenReturn( getTEIWithProgramInstances() );
         when( organisationUnitService.isInUserHierarchyCached( user, organisationUnit ) )
             .thenReturn( true );
         when( aclService.canDataWrite( user, trackedEntityType ) ).thenReturn( true );
@@ -311,10 +340,14 @@ class PreCheckSecurityOwnershipValidationHookTest extends DhisConvenienceTest
             .orgUnit( ORG_UNIT_ID )
             .trackedEntityType( TEI_TYPE_ID )
             .build();
-        when( ctx.getOrganisationUnit( ORG_UNIT_ID ) ).thenReturn( organisationUnit );
-        when( ctx.getTrackedEntityType( TEI_TYPE_ID ) ).thenReturn( trackedEntityType );
-        when( ctx.getStrategy( trackedEntity ) ).thenReturn( TrackerImportStrategy.DELETE );
-        when( ctx.getTrackedEntityInstance( TEI_ID ) ).thenReturn( getTEIWithProgramInstances() );
+        when( ctx.getBundle().getPreheat().<OrganisationUnit> get( OrganisationUnit.class, ORG_UNIT_ID ) )
+            .thenReturn( organisationUnit );
+        when( ctx.getBundle().getPreheat().<TrackedEntityType> get( TrackedEntityType.class, TEI_TYPE_ID ) )
+            .thenReturn( trackedEntityType );
+        when( ctx.getBundle().getResolvedStrategyMap().get( ((TrackerDto) trackedEntity).getTrackerType() )
+            .get( ((TrackerDto) trackedEntity).getUid() ) ).thenReturn( TrackerImportStrategy.DELETE );
+        when( ctx.getBundle().getPreheat().getTrackedEntity( ctx.getBundle().getIdentifier(), TEI_ID ) )
+            .thenReturn( getTEIWithProgramInstances() );
         when( organisationUnitService.isInUserHierarchyCached( user, organisationUnit ) )
             .thenReturn( true );
         when( aclService.canDataWrite( user, trackedEntityType ) ).thenReturn( true );
@@ -333,10 +366,14 @@ class PreCheckSecurityOwnershipValidationHookTest extends DhisConvenienceTest
             .orgUnit( ORG_UNIT_ID )
             .trackedEntityType( TEI_TYPE_ID )
             .build();
-        when( ctx.getOrganisationUnit( ORG_UNIT_ID ) ).thenReturn( organisationUnit );
-        when( ctx.getTrackedEntityType( TEI_TYPE_ID ) ).thenReturn( trackedEntityType );
-        when( ctx.getStrategy( trackedEntity ) ).thenReturn( TrackerImportStrategy.CREATE );
-        when( ctx.getOrganisationUnit( ORG_UNIT_ID ) ).thenReturn( organisationUnit );
+        when( ctx.getBundle().getPreheat().<OrganisationUnit> get( OrganisationUnit.class, ORG_UNIT_ID ) )
+            .thenReturn( organisationUnit );
+        when( ctx.getBundle().getPreheat().<TrackedEntityType> get( TrackedEntityType.class, TEI_TYPE_ID ) )
+            .thenReturn( trackedEntityType );
+        when( ctx.getBundle().getResolvedStrategyMap().get( ((TrackerDto) trackedEntity).getTrackerType() )
+            .get( ((TrackerDto) trackedEntity).getUid() ) ).thenReturn( TrackerImportStrategy.CREATE );
+        when( ctx.getBundle().getPreheat().<OrganisationUnit> get( OrganisationUnit.class, ORG_UNIT_ID ) )
+            .thenReturn( organisationUnit );
         when( organisationUnitService.isInUserHierarchyCached( user, organisationUnit ) )
             .thenReturn( false );
         when( aclService.canDataWrite( user, trackedEntityType ) ).thenReturn( true );
@@ -357,10 +394,14 @@ class PreCheckSecurityOwnershipValidationHookTest extends DhisConvenienceTest
             .orgUnit( ORG_UNIT_ID )
             .trackedEntityType( TEI_TYPE_ID )
             .build();
-        when( ctx.getOrganisationUnit( ORG_UNIT_ID ) ).thenReturn( organisationUnit );
-        when( ctx.getTrackedEntityType( TEI_TYPE_ID ) ).thenReturn( trackedEntityType );
-        when( ctx.getStrategy( trackedEntity ) ).thenReturn( TrackerImportStrategy.CREATE_AND_UPDATE );
-        when( ctx.getOrganisationUnit( ORG_UNIT_ID ) ).thenReturn( organisationUnit );
+        when( ctx.getBundle().getPreheat().<OrganisationUnit> get( OrganisationUnit.class, ORG_UNIT_ID ) )
+            .thenReturn( organisationUnit );
+        when( ctx.getBundle().getPreheat().<TrackedEntityType> get( TrackedEntityType.class, TEI_TYPE_ID ) )
+            .thenReturn( trackedEntityType );
+        when( ctx.getBundle().getResolvedStrategyMap().get( ((TrackerDto) trackedEntity).getTrackerType() )
+            .get( ((TrackerDto) trackedEntity).getUid() ) ).thenReturn( TrackerImportStrategy.CREATE_AND_UPDATE );
+        when( ctx.getBundle().getPreheat().<OrganisationUnit> get( OrganisationUnit.class, ORG_UNIT_ID ) )
+            .thenReturn( organisationUnit );
         when( organisationUnitService.isInUserSearchHierarchyCached( user, organisationUnit ) )
             .thenReturn( false );
         when( aclService.canDataWrite( user, trackedEntityType ) ).thenReturn( true );
@@ -379,9 +420,12 @@ class PreCheckSecurityOwnershipValidationHookTest extends DhisConvenienceTest
             .orgUnit( ORG_UNIT_ID )
             .trackedEntityType( TEI_TYPE_ID )
             .build();
-        when( ctx.getOrganisationUnit( ORG_UNIT_ID ) ).thenReturn( organisationUnit );
-        when( ctx.getTrackedEntityType( TEI_TYPE_ID ) ).thenReturn( trackedEntityType );
-        when( ctx.getStrategy( trackedEntity ) ).thenReturn( TrackerImportStrategy.CREATE_AND_UPDATE );
+        when( ctx.getBundle().getPreheat().<OrganisationUnit> get( OrganisationUnit.class, ORG_UNIT_ID ) )
+            .thenReturn( organisationUnit );
+        when( ctx.getBundle().getPreheat().<TrackedEntityType> get( TrackedEntityType.class, TEI_TYPE_ID ) )
+            .thenReturn( trackedEntityType );
+        when( ctx.getBundle().getResolvedStrategyMap().get( ((TrackerDto) trackedEntity).getTrackerType() )
+            .get( ((TrackerDto) trackedEntity).getUid() ) ).thenReturn( TrackerImportStrategy.CREATE_AND_UPDATE );
         when( organisationUnitService.isInUserSearchHierarchyCached( user, organisationUnit ) )
             .thenReturn( true );
         when( aclService.canDataWrite( user, trackedEntityType ) ).thenReturn( false );
@@ -401,8 +445,9 @@ class PreCheckSecurityOwnershipValidationHookTest extends DhisConvenienceTest
             .trackedEntity( TEI_ID )
             .program( PROGRAM_ID )
             .build();
-        when( ctx.getStrategy( enrollment ) ).thenReturn( TrackerImportStrategy.CREATE_AND_UPDATE );
-        when( ctx.getProgram( PROGRAM_ID ) ).thenReturn( program );
+        when( ctx.getBundle().getResolvedStrategyMap().get( ((TrackerDto) enrollment).getTrackerType() )
+            .get( ((TrackerDto) enrollment).getUid() ) ).thenReturn( TrackerImportStrategy.CREATE_AND_UPDATE );
+        when( ctx.getBundle().getPreheat().<Program> get( Program.class, PROGRAM_ID ) ).thenReturn( program );
         when( aclService.canDataWrite( user, program ) ).thenReturn( true );
         when( aclService.canDataRead( user, program.getTrackedEntityType() ) ).thenReturn( true );
         reporter = new ValidationErrorReporter( ctx );
@@ -421,9 +466,11 @@ class PreCheckSecurityOwnershipValidationHookTest extends DhisConvenienceTest
             .trackedEntity( TEI_ID )
             .program( PROGRAM_ID )
             .build();
-        when( ctx.getStrategy( enrollment ) ).thenReturn( TrackerImportStrategy.CREATE );
-        when( ctx.getProgram( PROGRAM_ID ) ).thenReturn( program );
-        when( ctx.getOrganisationUnit( ORG_UNIT_ID ) ).thenReturn( organisationUnit );
+        when( ctx.getBundle().getResolvedStrategyMap().get( ((TrackerDto) enrollment).getTrackerType() )
+            .get( ((TrackerDto) enrollment).getUid() ) ).thenReturn( TrackerImportStrategy.CREATE );
+        when( ctx.getBundle().getPreheat().<Program> get( Program.class, PROGRAM_ID ) ).thenReturn( program );
+        when( ctx.getBundle().getPreheat().<OrganisationUnit> get( OrganisationUnit.class, ORG_UNIT_ID ) )
+            .thenReturn( organisationUnit );
         when( organisationUnitService.isInUserHierarchyCached( user, organisationUnit ) )
             .thenReturn( true );
         when( aclService.canDataWrite( user, program ) ).thenReturn( true );
@@ -445,9 +492,11 @@ class PreCheckSecurityOwnershipValidationHookTest extends DhisConvenienceTest
             .trackedEntity( TEI_ID )
             .program( PROGRAM_ID )
             .build();
-        when( ctx.getStrategy( enrollment ) ).thenReturn( TrackerImportStrategy.DELETE );
-        when( ctx.getProgram( PROGRAM_ID ) ).thenReturn( program );
-        when( ctx.getOrganisationUnit( ORG_UNIT_ID ) ).thenReturn( organisationUnit );
+        when( ctx.getBundle().getResolvedStrategyMap().get( ((TrackerDto) enrollment).getTrackerType() )
+            .get( ((TrackerDto) enrollment).getUid() ) ).thenReturn( TrackerImportStrategy.DELETE );
+        when( ctx.getBundle().getPreheat().<Program> get( Program.class, PROGRAM_ID ) ).thenReturn( program );
+        when( ctx.getBundle().getPreheat().<OrganisationUnit> get( OrganisationUnit.class, ORG_UNIT_ID ) )
+            .thenReturn( organisationUnit );
         when( aclService.canDataWrite( user, program ) ).thenReturn( true );
         when( aclService.canDataRead( user, program.getTrackedEntityType() ) ).thenReturn( true );
         when( organisationUnitService.isInUserHierarchyCached( user, organisationUnit ) )
@@ -470,9 +519,11 @@ class PreCheckSecurityOwnershipValidationHookTest extends DhisConvenienceTest
             .trackedEntity( TEI_ID )
             .program( PROGRAM_ID )
             .build();
-        when( ctx.getStrategy( enrollment ) ).thenReturn( TrackerImportStrategy.CREATE_AND_UPDATE );
-        when( ctx.getProgram( PROGRAM_ID ) ).thenReturn( program );
-        when( ctx.getOrganisationUnit( ORG_UNIT_ID ) ).thenReturn( organisationUnit );
+        when( ctx.getBundle().getResolvedStrategyMap().get( ((TrackerDto) enrollment).getTrackerType() )
+            .get( ((TrackerDto) enrollment).getUid() ) ).thenReturn( TrackerImportStrategy.CREATE_AND_UPDATE );
+        when( ctx.getBundle().getPreheat().<Program> get( Program.class, PROGRAM_ID ) ).thenReturn( program );
+        when( ctx.getBundle().getPreheat().<OrganisationUnit> get( OrganisationUnit.class, ORG_UNIT_ID ) )
+            .thenReturn( organisationUnit );
         when( organisationUnitService.isInUserHierarchyCached( user, organisationUnit ) )
             .thenReturn( true );
         when( aclService.canDataWrite( user, program ) ).thenReturn( true );
@@ -492,10 +543,13 @@ class PreCheckSecurityOwnershipValidationHookTest extends DhisConvenienceTest
             .trackedEntity( TEI_ID )
             .program( PROGRAM_ID )
             .build();
-        when( ctx.getStrategy( enrollment ) ).thenReturn( TrackerImportStrategy.DELETE );
-        when( ctx.programInstanceHasEvents( enrollment.getEnrollment() ) ).thenReturn( false );
-        when( ctx.getProgram( PROGRAM_ID ) ).thenReturn( program );
-        when( ctx.getOrganisationUnit( ORG_UNIT_ID ) ).thenReturn( organisationUnit );
+        when( ctx.getBundle().getResolvedStrategyMap().get( ((TrackerDto) enrollment).getTrackerType() )
+            .get( ((TrackerDto) enrollment).getUid() ) ).thenReturn( TrackerImportStrategy.DELETE );
+        when( ctx.getBundle().getPreheat().getProgramInstanceWithOneOrMoreNonDeletedEvent()
+            .contains( enrollment.getEnrollment() ) ).thenReturn( false );
+        when( ctx.getBundle().getPreheat().<Program> get( Program.class, PROGRAM_ID ) ).thenReturn( program );
+        when( ctx.getBundle().getPreheat().<OrganisationUnit> get( OrganisationUnit.class, ORG_UNIT_ID ) )
+            .thenReturn( organisationUnit );
         when( organisationUnitService.isInUserHierarchyCached( user, organisationUnit ) )
             .thenReturn( true );
         when( aclService.canDataWrite( user, program ) ).thenReturn( true );
@@ -516,10 +570,13 @@ class PreCheckSecurityOwnershipValidationHookTest extends DhisConvenienceTest
             .trackedEntity( TEI_ID )
             .program( PROGRAM_ID )
             .build();
-        when( ctx.getStrategy( enrollment ) ).thenReturn( TrackerImportStrategy.DELETE );
-        when( ctx.programInstanceHasEvents( enrollment.getEnrollment() ) ).thenReturn( true );
-        when( ctx.getProgram( PROGRAM_ID ) ).thenReturn( program );
-        when( ctx.getOrganisationUnit( ORG_UNIT_ID ) ).thenReturn( organisationUnit );
+        when( ctx.getBundle().getResolvedStrategyMap().get( ((TrackerDto) enrollment).getTrackerType() )
+            .get( ((TrackerDto) enrollment).getUid() ) ).thenReturn( TrackerImportStrategy.DELETE );
+        when( ctx.getBundle().getPreheat().getProgramInstanceWithOneOrMoreNonDeletedEvent()
+            .contains( enrollment.getEnrollment() ) ).thenReturn( true );
+        when( ctx.getBundle().getPreheat().<Program> get( Program.class, PROGRAM_ID ) ).thenReturn( program );
+        when( ctx.getBundle().getPreheat().<OrganisationUnit> get( OrganisationUnit.class, ORG_UNIT_ID ) )
+            .thenReturn( organisationUnit );
         when( organisationUnitService.isInUserHierarchyCached( user, organisationUnit ) )
             .thenReturn( true );
         when( aclService.canDataWrite( user, program ) ).thenReturn( true );
@@ -541,10 +598,13 @@ class PreCheckSecurityOwnershipValidationHookTest extends DhisConvenienceTest
             .trackedEntity( TEI_ID )
             .program( PROGRAM_ID )
             .build();
-        when( ctx.getStrategy( enrollment ) ).thenReturn( TrackerImportStrategy.DELETE );
-        when( ctx.programInstanceHasEvents( enrollment.getEnrollment() ) ).thenReturn( false );
-        when( ctx.getProgram( PROGRAM_ID ) ).thenReturn( program );
-        when( ctx.getOrganisationUnit( ORG_UNIT_ID ) ).thenReturn( organisationUnit );
+        when( ctx.getBundle().getResolvedStrategyMap().get( ((TrackerDto) enrollment).getTrackerType() )
+            .get( ((TrackerDto) enrollment).getUid() ) ).thenReturn( TrackerImportStrategy.DELETE );
+        when( ctx.getBundle().getPreheat().getProgramInstanceWithOneOrMoreNonDeletedEvent()
+            .contains( enrollment.getEnrollment() ) ).thenReturn( false );
+        when( ctx.getBundle().getPreheat().<Program> get( Program.class, PROGRAM_ID ) ).thenReturn( program );
+        when( ctx.getBundle().getPreheat().<OrganisationUnit> get( OrganisationUnit.class, ORG_UNIT_ID ) )
+            .thenReturn( organisationUnit );
         when( organisationUnitService.isInUserHierarchyCached( user, organisationUnit ) )
             .thenReturn( false );
         when( aclService.canDataWrite( user, program ) ).thenReturn( true );
@@ -565,10 +625,13 @@ class PreCheckSecurityOwnershipValidationHookTest extends DhisConvenienceTest
             .trackedEntity( TEI_ID )
             .program( PROGRAM_ID )
             .build();
-        when( ctx.getStrategy( enrollment ) ).thenReturn( TrackerImportStrategy.DELETE );
-        when( ctx.programInstanceHasEvents( enrollment.getEnrollment() ) ).thenReturn( true );
-        when( ctx.getProgram( PROGRAM_ID ) ).thenReturn( program );
-        when( ctx.getOrganisationUnit( ORG_UNIT_ID ) ).thenReturn( organisationUnit );
+        when( ctx.getBundle().getResolvedStrategyMap().get( ((TrackerDto) enrollment).getTrackerType() )
+            .get( ((TrackerDto) enrollment).getUid() ) ).thenReturn( TrackerImportStrategy.DELETE );
+        when( ctx.getBundle().getPreheat().getProgramInstanceWithOneOrMoreNonDeletedEvent()
+            .contains( enrollment.getEnrollment() ) ).thenReturn( true );
+        when( ctx.getBundle().getPreheat().<Program> get( Program.class, PROGRAM_ID ) ).thenReturn( program );
+        when( ctx.getBundle().getPreheat().<OrganisationUnit> get( OrganisationUnit.class, ORG_UNIT_ID ) )
+            .thenReturn( organisationUnit );
         when( organisationUnitService.isInUserHierarchyCached( user, organisationUnit ) )
             .thenReturn( true );
         when( aclService.canDataWrite( user, program ) ).thenReturn( true );
@@ -590,9 +653,11 @@ class PreCheckSecurityOwnershipValidationHookTest extends DhisConvenienceTest
             .trackedEntity( TEI_ID )
             .program( PROGRAM_ID )
             .build();
-        when( ctx.getStrategy( enrollment ) ).thenReturn( TrackerImportStrategy.DELETE );
-        when( ctx.getProgram( PROGRAM_ID ) ).thenReturn( program );
-        when( ctx.getOrganisationUnit( ORG_UNIT_ID ) ).thenReturn( organisationUnit );
+        when( ctx.getBundle().getResolvedStrategyMap().get( ((TrackerDto) enrollment).getTrackerType() )
+            .get( ((TrackerDto) enrollment).getUid() ) ).thenReturn( TrackerImportStrategy.DELETE );
+        when( ctx.getBundle().getPreheat().<Program> get( Program.class, PROGRAM_ID ) ).thenReturn( program );
+        when( ctx.getBundle().getPreheat().<OrganisationUnit> get( OrganisationUnit.class, ORG_UNIT_ID ) )
+            .thenReturn( organisationUnit );
         when( aclService.canDataWrite( user, program ) ).thenReturn( false );
         when( aclService.canDataRead( user, program.getTrackedEntityType() ) ).thenReturn( true );
         when( organisationUnitService.isInUserHierarchyCached( user, organisationUnit ) )
@@ -614,9 +679,11 @@ class PreCheckSecurityOwnershipValidationHookTest extends DhisConvenienceTest
             .trackedEntity( TEI_ID )
             .program( PROGRAM_ID )
             .build();
-        when( ctx.getStrategy( enrollment ) ).thenReturn( TrackerImportStrategy.DELETE );
-        when( ctx.getProgram( PROGRAM_ID ) ).thenReturn( program );
-        when( ctx.getOrganisationUnit( ORG_UNIT_ID ) ).thenReturn( organisationUnit );
+        when( ctx.getBundle().getResolvedStrategyMap().get( ((TrackerDto) enrollment).getTrackerType() )
+            .get( ((TrackerDto) enrollment).getUid() ) ).thenReturn( TrackerImportStrategy.DELETE );
+        when( ctx.getBundle().getPreheat().<Program> get( Program.class, PROGRAM_ID ) ).thenReturn( program );
+        when( ctx.getBundle().getPreheat().<OrganisationUnit> get( OrganisationUnit.class, ORG_UNIT_ID ) )
+            .thenReturn( organisationUnit );
         when( aclService.canDataWrite( user, program ) ).thenReturn( true );
         when( aclService.canDataRead( user, program.getTrackedEntityType() ) ).thenReturn( false );
         when( organisationUnitService.isInUserHierarchyCached( user, organisationUnit ) )
@@ -638,14 +705,18 @@ class PreCheckSecurityOwnershipValidationHookTest extends DhisConvenienceTest
             .programStage( PS_ID )
             .program( PROGRAM_ID )
             .build();
-        when( ctx.getStrategy( event ) ).thenReturn( TrackerImportStrategy.DELETE );
+        when( ctx.getBundle().getResolvedStrategyMap().get( ((TrackerDto) event).getTrackerType() )
+            .get( ((TrackerDto) event).getUid() ) ).thenReturn( TrackerImportStrategy.DELETE );
         ProgramInstance programInstance = getEnrollment( enrollmentUid );
         ProgramStageInstance programStageInstance = getEvent();
         programStageInstance.setProgramInstance( programInstance );
-        when( ctx.getProgramStageInstance( event.getEvent() ) ).thenReturn( programStageInstance );
-        when( ctx.getProgramInstance( event.getEnrollment() ) ).thenReturn( programInstance );
-        when( ctx.getProgram( PROGRAM_ID ) ).thenReturn( program );
-        when( ctx.getOrganisationUnit( ORG_UNIT_ID ) ).thenReturn( organisationUnit );
+        when( ctx.getBundle().getPreheat().getEvent( ctx.getBundle().getIdentifier(), event.getEvent() ) )
+            .thenReturn( programStageInstance );
+        when( ctx.getBundle().getPreheat().getEnrollment( ctx.getBundle().getIdentifier(), event.getEnrollment() ) )
+            .thenReturn( programInstance );
+        when( ctx.getBundle().getPreheat().<Program> get( Program.class, PROGRAM_ID ) ).thenReturn( program );
+        when( ctx.getBundle().getPreheat().<OrganisationUnit> get( OrganisationUnit.class, ORG_UNIT_ID ) )
+            .thenReturn( organisationUnit );
         when( organisationUnitService.isInUserHierarchyCached( user, organisationUnit ) )
             .thenReturn( true );
         when( aclService.canDataRead( user, program.getTrackedEntityType() ) ).thenReturn( true );
@@ -669,13 +740,16 @@ class PreCheckSecurityOwnershipValidationHookTest extends DhisConvenienceTest
             .programStage( PS_ID )
             .program( PROGRAM_ID )
             .build();
-        when( ctx.getStrategy( event ) ).thenReturn( TrackerImportStrategy.CREATE );
-        when( ctx.getProgramStage( event.getProgramStage() ) ).thenReturn( programStage );
+        when( ctx.getBundle().getResolvedStrategyMap().get( ((TrackerDto) event).getTrackerType() )
+            .get( ((TrackerDto) event).getUid() ) ).thenReturn( TrackerImportStrategy.CREATE );
+        when( ctx.getBundle().getPreheat().<ProgramStage> get( ProgramStage.class, event.getProgramStage() ) )
+            .thenReturn( programStage );
         ProgramInstance programInstance = getEnrollment( enrollmentUid );
         ProgramStageInstance programStageInstance = getEvent();
         programStageInstance.setProgramInstance( programInstance );
-        when( ctx.getProgram( PROGRAM_ID ) ).thenReturn( program );
-        when( ctx.getOrganisationUnit( ORG_UNIT_ID ) ).thenReturn( organisationUnit );
+        when( ctx.getBundle().getPreheat().<Program> get( Program.class, PROGRAM_ID ) ).thenReturn( program );
+        when( ctx.getBundle().getPreheat().<OrganisationUnit> get( OrganisationUnit.class, ORG_UNIT_ID ) )
+            .thenReturn( organisationUnit );
         when( organisationUnitService.isInUserHierarchyCached( user, organisationUnit ) )
             .thenReturn( true );
         when( aclService.canDataWrite( user, program ) ).thenReturn( true );
@@ -696,11 +770,15 @@ class PreCheckSecurityOwnershipValidationHookTest extends DhisConvenienceTest
             .programStage( PS_ID )
             .program( PROGRAM_ID )
             .build();
-        when( ctx.getStrategy( event ) ).thenReturn( TrackerImportStrategy.CREATE );
-        when( ctx.getProgramStage( event.getProgramStage() ) ).thenReturn( programStage );
-        when( ctx.getProgramInstance( event.getEnrollment() ) ).thenReturn( getEnrollment( null ) );
-        when( ctx.getProgram( PROGRAM_ID ) ).thenReturn( program );
-        when( ctx.getOrganisationUnit( ORG_UNIT_ID ) ).thenReturn( organisationUnit );
+        when( ctx.getBundle().getResolvedStrategyMap().get( ((TrackerDto) event).getTrackerType() )
+            .get( ((TrackerDto) event).getUid() ) ).thenReturn( TrackerImportStrategy.CREATE );
+        when( ctx.getBundle().getPreheat().<ProgramStage> get( ProgramStage.class, event.getProgramStage() ) )
+            .thenReturn( programStage );
+        when( ctx.getBundle().getPreheat().getEnrollment( ctx.getBundle().getIdentifier(), event.getEnrollment() ) )
+            .thenReturn( getEnrollment( null ) );
+        when( ctx.getBundle().getPreheat().<Program> get( Program.class, PROGRAM_ID ) ).thenReturn( program );
+        when( ctx.getBundle().getPreheat().<OrganisationUnit> get( OrganisationUnit.class, ORG_UNIT_ID ) )
+            .thenReturn( organisationUnit );
         when( organisationUnitService.isInUserHierarchyCached( user, organisationUnit ) )
             .thenReturn( true );
         when( aclService.canDataRead( user, program.getTrackedEntityType() ) ).thenReturn( true );
@@ -722,11 +800,15 @@ class PreCheckSecurityOwnershipValidationHookTest extends DhisConvenienceTest
             .programStage( PS_ID )
             .program( PROGRAM_ID )
             .build();
-        when( ctx.getStrategy( event ) ).thenReturn( TrackerImportStrategy.CREATE_AND_UPDATE );
-        when( ctx.getProgramStage( event.getProgramStage() ) ).thenReturn( programStage );
-        when( ctx.getProgramInstance( event.getEnrollment() ) ).thenReturn( getEnrollment( null ) );
-        when( ctx.getProgram( PROGRAM_ID ) ).thenReturn( program );
-        when( ctx.getOrganisationUnit( ORG_UNIT_ID ) ).thenReturn( organisationUnit );
+        when( ctx.getBundle().getResolvedStrategyMap().get( ((TrackerDto) event).getTrackerType() )
+            .get( ((TrackerDto) event).getUid() ) ).thenReturn( TrackerImportStrategy.CREATE_AND_UPDATE );
+        when( ctx.getBundle().getPreheat().<ProgramStage> get( ProgramStage.class, event.getProgramStage() ) )
+            .thenReturn( programStage );
+        when( ctx.getBundle().getPreheat().getEnrollment( ctx.getBundle().getIdentifier(), event.getEnrollment() ) )
+            .thenReturn( getEnrollment( null ) );
+        when( ctx.getBundle().getPreheat().<Program> get( Program.class, PROGRAM_ID ) ).thenReturn( program );
+        when( ctx.getBundle().getPreheat().<OrganisationUnit> get( OrganisationUnit.class, ORG_UNIT_ID ) )
+            .thenReturn( organisationUnit );
         when( organisationUnitService.isInUserHierarchyCached( user, organisationUnit ) )
             .thenReturn( true );
         when( aclService.canDataRead( user, program.getTrackedEntityType() ) ).thenReturn( true );
@@ -750,15 +832,20 @@ class PreCheckSecurityOwnershipValidationHookTest extends DhisConvenienceTest
             .program( PROGRAM_ID )
             .status( EventStatus.COMPLETED )
             .build();
-        when( ctx.getStrategy( event ) ).thenReturn( TrackerImportStrategy.UPDATE );
-        when( ctx.getProgramStage( event.getProgramStage() ) ).thenReturn( programStage );
+        when( ctx.getBundle().getResolvedStrategyMap().get( ((TrackerDto) event).getTrackerType() )
+            .get( ((TrackerDto) event).getUid() ) ).thenReturn( TrackerImportStrategy.UPDATE );
+        when( ctx.getBundle().getPreheat().<ProgramStage> get( ProgramStage.class, event.getProgramStage() ) )
+            .thenReturn( programStage );
         ProgramInstance programInstance = getEnrollment( enrollmentUid );
         ProgramStageInstance programStageInstance = getEvent();
         programStageInstance.setProgramInstance( programInstance );
-        when( ctx.getProgramStageInstance( event.getEvent() ) ).thenReturn( programStageInstance );
-        when( ctx.getProgramInstance( event.getEnrollment() ) ).thenReturn( programInstance );
-        when( ctx.getProgram( PROGRAM_ID ) ).thenReturn( program );
-        when( ctx.getOrganisationUnit( ORG_UNIT_ID ) ).thenReturn( organisationUnit );
+        when( ctx.getBundle().getPreheat().getEvent( ctx.getBundle().getIdentifier(), event.getEvent() ) )
+            .thenReturn( programStageInstance );
+        when( ctx.getBundle().getPreheat().getEnrollment( ctx.getBundle().getIdentifier(), event.getEnrollment() ) )
+            .thenReturn( programInstance );
+        when( ctx.getBundle().getPreheat().<Program> get( Program.class, PROGRAM_ID ) ).thenReturn( program );
+        when( ctx.getBundle().getPreheat().<OrganisationUnit> get( OrganisationUnit.class, ORG_UNIT_ID ) )
+            .thenReturn( organisationUnit );
         when( organisationUnitService.isInUserHierarchyCached( user, organisationUnit ) )
             .thenReturn( true );
         when( aclService.canDataRead( user, program.getTrackedEntityType() ) ).thenReturn( true );
@@ -781,15 +868,20 @@ class PreCheckSecurityOwnershipValidationHookTest extends DhisConvenienceTest
             .programStage( PS_ID )
             .program( PROGRAM_ID )
             .build();
-        when( ctx.getStrategy( event ) ).thenReturn( TrackerImportStrategy.UPDATE );
-        when( ctx.getProgramStage( event.getProgramStage() ) ).thenReturn( programStage );
+        when( ctx.getBundle().getResolvedStrategyMap().get( ((TrackerDto) event).getTrackerType() )
+            .get( ((TrackerDto) event).getUid() ) ).thenReturn( TrackerImportStrategy.UPDATE );
+        when( ctx.getBundle().getPreheat().<ProgramStage> get( ProgramStage.class, event.getProgramStage() ) )
+            .thenReturn( programStage );
         ProgramInstance programInstance = getEnrollment( enrollmentUid );
         ProgramStageInstance programStageInstance = getEvent();
         programStageInstance.setProgramInstance( programInstance );
-        when( ctx.getProgramStageInstance( event.getEvent() ) ).thenReturn( programStageInstance );
-        when( ctx.getProgramInstance( event.getEnrollment() ) ).thenReturn( programInstance );
-        when( ctx.getProgram( PROGRAM_ID ) ).thenReturn( program );
-        when( ctx.getOrganisationUnit( ORG_UNIT_ID ) ).thenReturn( organisationUnit );
+        when( ctx.getBundle().getPreheat().getEvent( ctx.getBundle().getIdentifier(), event.getEvent() ) )
+            .thenReturn( programStageInstance );
+        when( ctx.getBundle().getPreheat().getEnrollment( ctx.getBundle().getIdentifier(), event.getEnrollment() ) )
+            .thenReturn( programInstance );
+        when( ctx.getBundle().getPreheat().<Program> get( Program.class, PROGRAM_ID ) ).thenReturn( program );
+        when( ctx.getBundle().getPreheat().<OrganisationUnit> get( OrganisationUnit.class, ORG_UNIT_ID ) )
+            .thenReturn( organisationUnit );
         when( aclService.canDataRead( user, program.getTrackedEntityType() ) ).thenReturn( true );
         when( aclService.canDataRead( user, program ) ).thenReturn( true );
         when( aclService.canDataWrite( user, programStage ) ).thenReturn( true );
@@ -813,11 +905,15 @@ class PreCheckSecurityOwnershipValidationHookTest extends DhisConvenienceTest
             .programStage( PS_ID )
             .program( PROGRAM_ID )
             .build();
-        when( ctx.getStrategy( event ) ).thenReturn( TrackerImportStrategy.CREATE );
-        when( ctx.getProgramStage( event.getProgramStage() ) ).thenReturn( programStage );
-        when( ctx.getProgramInstance( event.getEnrollment() ) ).thenReturn( getEnrollment( null ) );
-        when( ctx.getProgram( PROGRAM_ID ) ).thenReturn( program );
-        when( ctx.getOrganisationUnit( ORG_UNIT_ID ) ).thenReturn( organisationUnit );
+        when( ctx.getBundle().getResolvedStrategyMap().get( ((TrackerDto) event).getTrackerType() )
+            .get( ((TrackerDto) event).getUid() ) ).thenReturn( TrackerImportStrategy.CREATE );
+        when( ctx.getBundle().getPreheat().<ProgramStage> get( ProgramStage.class, event.getProgramStage() ) )
+            .thenReturn( programStage );
+        when( ctx.getBundle().getPreheat().getEnrollment( ctx.getBundle().getIdentifier(), event.getEnrollment() ) )
+            .thenReturn( getEnrollment( null ) );
+        when( ctx.getBundle().getPreheat().<Program> get( Program.class, PROGRAM_ID ) ).thenReturn( program );
+        when( ctx.getBundle().getPreheat().<OrganisationUnit> get( OrganisationUnit.class, ORG_UNIT_ID ) )
+            .thenReturn( organisationUnit );
         when( organisationUnitService.isInUserHierarchyCached( user, organisationUnit ) )
             .thenReturn( false );
         when( aclService.canDataRead( user, program.getTrackedEntityType() ) ).thenReturn( true );
@@ -841,11 +937,15 @@ class PreCheckSecurityOwnershipValidationHookTest extends DhisConvenienceTest
             .program( PROGRAM_ID )
             .status( EventStatus.SCHEDULE )
             .build();
-        when( ctx.getStrategy( event ) ).thenReturn( TrackerImportStrategy.CREATE );
-        when( ctx.getProgramStage( event.getProgramStage() ) ).thenReturn( programStage );
-        when( ctx.getProgramInstance( event.getEnrollment() ) ).thenReturn( getEnrollment( null ) );
-        when( ctx.getProgram( PROGRAM_ID ) ).thenReturn( program );
-        when( ctx.getOrganisationUnit( ORG_UNIT_ID ) ).thenReturn( organisationUnit );
+        when( ctx.getBundle().getResolvedStrategyMap().get( ((TrackerDto) event).getTrackerType() )
+            .get( ((TrackerDto) event).getUid() ) ).thenReturn( TrackerImportStrategy.CREATE );
+        when( ctx.getBundle().getPreheat().<ProgramStage> get( ProgramStage.class, event.getProgramStage() ) )
+            .thenReturn( programStage );
+        when( ctx.getBundle().getPreheat().getEnrollment( ctx.getBundle().getIdentifier(), event.getEnrollment() ) )
+            .thenReturn( getEnrollment( null ) );
+        when( ctx.getBundle().getPreheat().<Program> get( Program.class, PROGRAM_ID ) ).thenReturn( program );
+        when( ctx.getBundle().getPreheat().<OrganisationUnit> get( OrganisationUnit.class, ORG_UNIT_ID ) )
+            .thenReturn( organisationUnit );
         when( organisationUnitService.isInUserSearchHierarchyCached( user, organisationUnit ) )
             .thenReturn( false );
         when( aclService.canDataRead( user, program.getTrackedEntityType() ) ).thenReturn( true );
@@ -869,14 +969,18 @@ class PreCheckSecurityOwnershipValidationHookTest extends DhisConvenienceTest
             .programStage( PS_ID )
             .program( PROGRAM_ID )
             .build();
-        when( ctx.getStrategy( event ) ).thenReturn( TrackerImportStrategy.UPDATE );
+        when( ctx.getBundle().getResolvedStrategyMap().get( ((TrackerDto) event).getTrackerType() )
+            .get( ((TrackerDto) event).getUid() ) ).thenReturn( TrackerImportStrategy.UPDATE );
         ProgramInstance programInstance = getEnrollment( enrollmentUid );
         ProgramStageInstance programStageInstance = getEvent();
         programStageInstance.setProgramInstance( programInstance );
-        when( ctx.getProgramStageInstance( event.getEvent() ) ).thenReturn( programStageInstance );
-        when( ctx.getProgramInstance( event.getEnrollment() ) ).thenReturn( programInstance );
-        when( ctx.getProgram( PROGRAM_ID ) ).thenReturn( program );
-        when( ctx.getOrganisationUnit( ORG_UNIT_ID ) ).thenReturn( organisationUnit );
+        when( ctx.getBundle().getPreheat().getEvent( ctx.getBundle().getIdentifier(), event.getEvent() ) )
+            .thenReturn( programStageInstance );
+        when( ctx.getBundle().getPreheat().getEnrollment( ctx.getBundle().getIdentifier(), event.getEnrollment() ) )
+            .thenReturn( programInstance );
+        when( ctx.getBundle().getPreheat().<Program> get( Program.class, PROGRAM_ID ) ).thenReturn( program );
+        when( ctx.getBundle().getPreheat().<OrganisationUnit> get( OrganisationUnit.class, ORG_UNIT_ID ) )
+            .thenReturn( organisationUnit );
         when( aclService.canDataRead( user, program.getTrackedEntityType() ) ).thenReturn( true );
         when( aclService.canDataRead( user, program ) ).thenReturn( true );
         when( aclService.canDataWrite( user, programStage ) ).thenReturn( true );

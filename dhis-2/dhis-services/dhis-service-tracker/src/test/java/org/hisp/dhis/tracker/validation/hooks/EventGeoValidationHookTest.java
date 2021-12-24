@@ -79,7 +79,8 @@ class EventGeoValidationHookTest
 
         ProgramStage programStage = new ProgramStage();
         programStage.setFeatureType( FeatureType.POINT );
-        when( validationContext.getProgramStage( PROGRAM_STAGE ) ).thenReturn( programStage );
+        when( validationContext.getBundle().getPreheat().<ProgramStage> get( ProgramStage.class, PROGRAM_STAGE ) )
+            .thenReturn( programStage );
     }
 
     @Test
@@ -125,7 +126,8 @@ class EventGeoValidationHookTest
         ValidationErrorReporter reporter = new ValidationErrorReporter( validationContext );
 
         // when
-        when( validationContext.getProgramStage( event.getProgramStage() ) ).thenReturn( new ProgramStage() );
+        when( validationContext.getBundle().getPreheat().<ProgramStage> get( ProgramStage.class,
+            event.getProgramStage() ) ).thenReturn( new ProgramStage() );
 
         this.hookToTest.validateEvent( reporter, event );
 
@@ -147,7 +149,8 @@ class EventGeoValidationHookTest
         // when
         ProgramStage programStage = new ProgramStage();
         programStage.setFeatureType( NONE );
-        when( validationContext.getProgramStage( event.getProgramStage() ) ).thenReturn( programStage );
+        when( validationContext.getBundle().getPreheat().<ProgramStage> get( ProgramStage.class,
+            event.getProgramStage() ) ).thenReturn( programStage );
 
         this.hookToTest.validateEvent( reporter, event );
 
@@ -169,7 +172,8 @@ class EventGeoValidationHookTest
         // when
         ProgramStage programStage = new ProgramStage();
         programStage.setFeatureType( MULTI_POLYGON );
-        when( validationContext.getProgramStage( event.getProgramStage() ) ).thenReturn( programStage );
+        when( validationContext.getBundle().getPreheat().<ProgramStage> get( ProgramStage.class,
+            event.getProgramStage() ) ).thenReturn( programStage );
 
         this.hookToTest.validateEvent( reporter, event );
 

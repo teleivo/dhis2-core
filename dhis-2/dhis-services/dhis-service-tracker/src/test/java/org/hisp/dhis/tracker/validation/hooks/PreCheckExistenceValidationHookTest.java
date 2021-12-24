@@ -56,6 +56,7 @@ import org.hisp.dhis.tracker.domain.Enrollment;
 import org.hisp.dhis.tracker.domain.Event;
 import org.hisp.dhis.tracker.domain.Relationship;
 import org.hisp.dhis.tracker.domain.TrackedEntity;
+import org.hisp.dhis.tracker.domain.TrackerDto;
 import org.hisp.dhis.tracker.report.ValidationErrorReporter;
 import org.hisp.dhis.tracker.validation.TrackerImportValidationContext;
 import org.junit.jupiter.api.BeforeEach;
@@ -110,16 +111,31 @@ class PreCheckExistenceValidationHookTest
         validationHook = new PreCheckExistenceValidationHook();
 
         when( ctx.getBundle() ).thenReturn( bundle );
-        when( ctx.getStrategy( any( Event.class ) ) ).thenReturn( TrackerImportStrategy.CREATE_AND_UPDATE );
-        when( ctx.getStrategy( any( Enrollment.class ) ) ).thenReturn( TrackerImportStrategy.CREATE_AND_UPDATE );
-        when( ctx.getStrategy( any( TrackedEntity.class ) ) ).thenReturn( TrackerImportStrategy.CREATE_AND_UPDATE );
-        when( ctx.getTrackedEntityInstance( SOFT_DELETED_TEI_UID ) ).thenReturn( getSoftDeletedTei() );
-        when( ctx.getTrackedEntityInstance( TEI_UID ) ).thenReturn( getTei() );
-        when( ctx.getProgramInstance( SOFT_DELETED_ENROLLMENT_UID ) ).thenReturn( getSoftDeletedEnrollment() );
-        when( ctx.getProgramInstance( ENROLLMENT_UID ) ).thenReturn( getEnrollment() );
-        when( ctx.getProgramStageInstance( SOFT_DELETED_EVENT_UID ) ).thenReturn( getSoftDeletedEvent() );
-        when( ctx.getProgramStageInstance( EVENT_UID ) ).thenReturn( getEvent() );
-        when( ctx.getRelationship( getPayloadRelationship() ) ).thenReturn( getRelationship() );
+        TrackerDto dto2 = any( Event.class );
+        when( ctx.getBundle().getResolvedStrategyMap().get( dto2.getTrackerType() ).get( dto2.getUid() ) )
+            .thenReturn( TrackerImportStrategy.CREATE_AND_UPDATE );
+        TrackerDto dto1 = any( Enrollment.class );
+        when( ctx.getBundle().getResolvedStrategyMap().get( dto1.getTrackerType() ).get( dto1.getUid() ) )
+            .thenReturn( TrackerImportStrategy.CREATE_AND_UPDATE );
+        TrackerDto dto = any( TrackedEntity.class );
+        when( ctx.getBundle().getResolvedStrategyMap().get( dto.getTrackerType() ).get( dto.getUid() ) )
+            .thenReturn( TrackerImportStrategy.CREATE_AND_UPDATE );
+        when( ctx.getBundle().getPreheat().getTrackedEntity( ctx.getBundle().getIdentifier(), SOFT_DELETED_TEI_UID ) )
+            .thenReturn( getSoftDeletedTei() );
+        when( ctx.getBundle().getPreheat().getTrackedEntity( ctx.getBundle().getIdentifier(), TEI_UID ) )
+            .thenReturn( getTei() );
+        when(
+            ctx.getBundle().getPreheat().getEnrollment( ctx.getBundle().getIdentifier(), SOFT_DELETED_ENROLLMENT_UID ) )
+                .thenReturn( getSoftDeletedEnrollment() );
+        when( ctx.getBundle().getPreheat().getEnrollment( ctx.getBundle().getIdentifier(), ENROLLMENT_UID ) )
+            .thenReturn( getEnrollment() );
+        when( ctx.getBundle().getPreheat().getEvent( ctx.getBundle().getIdentifier(), SOFT_DELETED_EVENT_UID ) )
+            .thenReturn( getSoftDeletedEvent() );
+        when( ctx.getBundle().getPreheat().getEvent( ctx.getBundle().getIdentifier(), EVENT_UID ) )
+            .thenReturn( getEvent() );
+        when(
+            ctx.getBundle().getPreheat().getRelationship( ctx.getBundle().getIdentifier(), getPayloadRelationship() ) )
+                .thenReturn( getRelationship() );
     }
 
     @Test
@@ -131,7 +147,8 @@ class PreCheckExistenceValidationHookTest
             .build();
 
         // when
-        when( ctx.getStrategy( trackedEntity ) ).thenReturn( TrackerImportStrategy.CREATE );
+        when( ctx.getBundle().getResolvedStrategyMap().get( ((TrackerDto) trackedEntity).getTrackerType() )
+            .get( ((TrackerDto) trackedEntity).getUid() ) ).thenReturn( TrackerImportStrategy.CREATE );
 
         ValidationErrorReporter reporter = new ValidationErrorReporter( ctx );
         validationHook.validateTrackedEntity( reporter, trackedEntity );
@@ -197,7 +214,8 @@ class PreCheckExistenceValidationHookTest
             .build();
 
         // when
-        when( ctx.getStrategy( trackedEntity ) ).thenReturn( TrackerImportStrategy.CREATE );
+        when( ctx.getBundle().getResolvedStrategyMap().get( ((TrackerDto) trackedEntity).getTrackerType() )
+            .get( ((TrackerDto) trackedEntity).getUid() ) ).thenReturn( TrackerImportStrategy.CREATE );
 
         ValidationErrorReporter reporter = new ValidationErrorReporter( ctx );
         validationHook.validateTrackedEntity( reporter, trackedEntity );
@@ -215,7 +233,8 @@ class PreCheckExistenceValidationHookTest
             .build();
 
         // when
-        when( ctx.getStrategy( trackedEntity ) ).thenReturn( TrackerImportStrategy.UPDATE );
+        when( ctx.getBundle().getResolvedStrategyMap().get( ((TrackerDto) trackedEntity).getTrackerType() )
+            .get( ((TrackerDto) trackedEntity).getUid() ) ).thenReturn( TrackerImportStrategy.UPDATE );
 
         ValidationErrorReporter reporter = new ValidationErrorReporter( ctx );
         validationHook.validateTrackedEntity( reporter, trackedEntity );
@@ -233,7 +252,8 @@ class PreCheckExistenceValidationHookTest
             .build();
 
         // when
-        when( ctx.getStrategy( enrollment ) ).thenReturn( TrackerImportStrategy.CREATE );
+        when( ctx.getBundle().getResolvedStrategyMap().get( ((TrackerDto) enrollment).getTrackerType() )
+            .get( ((TrackerDto) enrollment).getUid() ) ).thenReturn( TrackerImportStrategy.CREATE );
 
         ValidationErrorReporter reporter = new ValidationErrorReporter( ctx );
         validationHook.validateEnrollment( reporter, enrollment );
@@ -299,7 +319,8 @@ class PreCheckExistenceValidationHookTest
             .build();
 
         // when
-        when( ctx.getStrategy( enrollment ) ).thenReturn( TrackerImportStrategy.CREATE );
+        when( ctx.getBundle().getResolvedStrategyMap().get( ((TrackerDto) enrollment).getTrackerType() )
+            .get( ((TrackerDto) enrollment).getUid() ) ).thenReturn( TrackerImportStrategy.CREATE );
 
         ValidationErrorReporter reporter = new ValidationErrorReporter( ctx );
         validationHook.validateEnrollment( reporter, enrollment );
@@ -317,7 +338,8 @@ class PreCheckExistenceValidationHookTest
             .build();
 
         // when
-        when( ctx.getStrategy( enrollment ) ).thenReturn( TrackerImportStrategy.UPDATE );
+        when( ctx.getBundle().getResolvedStrategyMap().get( ((TrackerDto) enrollment).getTrackerType() )
+            .get( ((TrackerDto) enrollment).getUid() ) ).thenReturn( TrackerImportStrategy.UPDATE );
 
         ValidationErrorReporter reporter = new ValidationErrorReporter( ctx );
         validationHook.validateEnrollment( reporter, enrollment );
@@ -335,7 +357,8 @@ class PreCheckExistenceValidationHookTest
             .build();
 
         // when
-        when( ctx.getStrategy( event ) ).thenReturn( TrackerImportStrategy.CREATE );
+        when( ctx.getBundle().getResolvedStrategyMap().get( ((TrackerDto) event).getTrackerType() )
+            .get( ((TrackerDto) event).getUid() ) ).thenReturn( TrackerImportStrategy.CREATE );
 
         ValidationErrorReporter reporter = new ValidationErrorReporter( ctx );
         validationHook.validateEvent( reporter, event );
@@ -401,7 +424,8 @@ class PreCheckExistenceValidationHookTest
             .build();
 
         // when
-        when( ctx.getStrategy( event ) ).thenReturn( TrackerImportStrategy.CREATE );
+        when( ctx.getBundle().getResolvedStrategyMap().get( ((TrackerDto) event).getTrackerType() )
+            .get( ((TrackerDto) event).getUid() ) ).thenReturn( TrackerImportStrategy.CREATE );
 
         ValidationErrorReporter reporter = new ValidationErrorReporter( ctx );
         validationHook.validateEvent( reporter, event );
@@ -419,7 +443,8 @@ class PreCheckExistenceValidationHookTest
             .build();
 
         // when
-        when( ctx.getStrategy( event ) ).thenReturn( TrackerImportStrategy.UPDATE );
+        when( ctx.getBundle().getResolvedStrategyMap().get( ((TrackerDto) event).getTrackerType() )
+            .get( ((TrackerDto) event).getUid() ) ).thenReturn( TrackerImportStrategy.UPDATE );
 
         ValidationErrorReporter reporter = new ValidationErrorReporter( ctx );
         validationHook.validateEvent( reporter, event );

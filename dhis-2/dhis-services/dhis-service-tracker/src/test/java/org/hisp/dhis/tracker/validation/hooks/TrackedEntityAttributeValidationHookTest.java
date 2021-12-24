@@ -98,8 +98,11 @@ class TrackedEntityAttributeValidationHookTest
         trackedEntityAttribute.setUid( "uid" );
         trackedEntityAttribute.setValueType( ValueType.TEXT );
 
-        when( validationContext.getTrackedEntityAttribute( anyString() ) ).thenReturn( trackedEntityAttribute );
-        when( validationContext.getTrackedEntityType( anyString() ) ).thenReturn( new TrackedEntityType() );
+        when( validationContext.getBundle().getPreheat().<TrackedEntityAttribute> get( TrackedEntityAttribute.class,
+            anyString() ) ).thenReturn( trackedEntityAttribute );
+        when(
+            validationContext.getBundle().getPreheat().<TrackedEntityType> get( TrackedEntityType.class, anyString() ) )
+                .thenReturn( new TrackedEntityType() );
 
         TrackedEntity trackedEntity = TrackedEntity.builder()
             .attributes(
@@ -130,7 +133,8 @@ class TrackedEntityAttributeValidationHookTest
 
         trackedEntityType.setTrackedEntityTypeAttributes( Collections.singletonList( trackedEntityTypeAttribute ) );
 
-        when( validationContext.getTrackedEntityType( tet ) ).thenReturn( trackedEntityType );
+        when( validationContext.getBundle().getPreheat().<TrackedEntityType> get( TrackedEntityType.class, tet ) )
+            .thenReturn( trackedEntityType );
 
         TrackedEntity trackedEntity = TrackedEntity.builder()
             .trackedEntityType( tet )
@@ -142,7 +146,8 @@ class TrackedEntityAttributeValidationHookTest
         contextAttribute.setUid( "uid" );
         contextAttribute.setValueType( ValueType.TEXT );
 
-        when( validationContext.getTrackedEntityAttribute( anyString() ) ).thenReturn( contextAttribute );
+        when( validationContext.getBundle().getPreheat().<TrackedEntityAttribute> get( TrackedEntityAttribute.class,
+            anyString() ) ).thenReturn( contextAttribute );
 
         ValidationErrorReporter reporter = new ValidationErrorReporter( validationContext );
         trackedEntityAttributeValidationHook.validateTrackedEntity( reporter,
@@ -163,7 +168,9 @@ class TrackedEntityAttributeValidationHookTest
             .trackedEntityType( "tet" )
             .build();
 
-        when( validationContext.getTrackedEntityType( anyString() ) ).thenReturn( new TrackedEntityType() );
+        when(
+            validationContext.getBundle().getPreheat().<TrackedEntityType> get( TrackedEntityType.class, anyString() ) )
+                .thenReturn( new TrackedEntityType() );
 
         ValidationErrorReporter reporter = new ValidationErrorReporter( validationContext );
         trackedEntityAttributeValidationHook.validateTrackedEntity( reporter,
@@ -196,8 +203,10 @@ class TrackedEntityAttributeValidationHookTest
 
         trackedEntityType.setTrackedEntityTypeAttributes( Collections.singletonList( trackedEntityTypeAttribute ) );
 
-        when( validationContext.getTrackedEntityType( tet ) ).thenReturn( trackedEntityType );
-        when( validationContext.getTrackedEntityAttribute( tea ) ).thenReturn( trackedEntityAttribute );
+        when( validationContext.getBundle().getPreheat().<TrackedEntityType> get( TrackedEntityType.class, tet ) )
+            .thenReturn( trackedEntityType );
+        when( validationContext.getBundle().getPreheat().<TrackedEntityAttribute> get( TrackedEntityAttribute.class,
+            tea ) ).thenReturn( trackedEntityAttribute );
 
         ValidationErrorReporter reporter = new ValidationErrorReporter( validationContext );
         trackedEntityAttributeValidationHook.validateTrackedEntity( reporter,
@@ -263,7 +272,8 @@ class TrackedEntityAttributeValidationHookTest
         when( dhisConfigurationProvider.getProperty( any() ) ).thenReturn( "property" );
         when( trackedEntityAttribute.getValueType() ).thenReturn( ValueType.TEXT );
 
-        when( validationContext.getTrackedEntityAttribute( anyString() ) ).thenReturn( trackedEntityAttribute );
+        when( validationContext.getBundle().getPreheat().<TrackedEntityAttribute> get( TrackedEntityAttribute.class,
+            anyString() ) ).thenReturn( trackedEntityAttribute );
 
         ValidationErrorReporter reporter = new ValidationErrorReporter( validationContext );
         String teUid = CodeGenerator.generateUid();
@@ -282,8 +292,11 @@ class TrackedEntityAttributeValidationHookTest
     {
         TrackedEntityAttribute trackedEntityAttribute = getTrackedEntityAttributeWithOptionSet();
 
-        when( validationContext.getTrackedEntityAttribute( anyString() ) ).thenReturn( trackedEntityAttribute );
-        when( validationContext.getTrackedEntityType( anyString() ) ).thenReturn( new TrackedEntityType() );
+        when( validationContext.getBundle().getPreheat().<TrackedEntityAttribute> get( TrackedEntityAttribute.class,
+            anyString() ) ).thenReturn( trackedEntityAttribute );
+        when(
+            validationContext.getBundle().getPreheat().<TrackedEntityType> get( TrackedEntityType.class, anyString() ) )
+                .thenReturn( new TrackedEntityType() );
 
         TrackedEntity trackedEntity = TrackedEntity.builder()
             .attributes(
@@ -306,8 +319,11 @@ class TrackedEntityAttributeValidationHookTest
     {
         TrackedEntityAttribute trackedEntityAttribute = getTrackedEntityAttributeWithOptionSet();
 
-        when( validationContext.getTrackedEntityAttribute( anyString() ) ).thenReturn( trackedEntityAttribute );
-        when( validationContext.getTrackedEntityType( anyString() ) ).thenReturn( new TrackedEntityType() );
+        when( validationContext.getBundle().getPreheat().<TrackedEntityAttribute> get( TrackedEntityAttribute.class,
+            anyString() ) ).thenReturn( trackedEntityAttribute );
+        when(
+            validationContext.getBundle().getPreheat().<TrackedEntityType> get( TrackedEntityType.class, anyString() ) )
+                .thenReturn( new TrackedEntityType() );
 
         TrackedEntity trackedEntity = TrackedEntity.builder()
             .attributes(
@@ -336,9 +352,12 @@ class TrackedEntityAttributeValidationHookTest
         TrackedEntityType trackedEntityType = new TrackedEntityType();
         trackedEntityType.setTrackedEntityTypeAttributes( Collections.singletonList( trackedEntityTypeAttribute ) );
 
-        when( validationContext.getTrackedEntityAttribute( "trackedEntityAttribute" ) )
-            .thenReturn( trackedEntityAttribute );
-        when( validationContext.getTrackedEntityType( anyString() ) ).thenReturn( trackedEntityType );
+        when( validationContext.getBundle().getPreheat().<TrackedEntityAttribute> get( TrackedEntityAttribute.class,
+            "trackedEntityAttribute" ) )
+                .thenReturn( trackedEntityAttribute );
+        when(
+            validationContext.getBundle().getPreheat().<TrackedEntityType> get( TrackedEntityType.class, anyString() ) )
+                .thenReturn( trackedEntityType );
 
         TrackedEntity trackedEntity = TrackedEntity.builder()
             .attributes(
@@ -374,10 +393,13 @@ class TrackedEntityAttributeValidationHookTest
         TrackedEntityType trackedEntityType = new TrackedEntityType();
         trackedEntityType.setTrackedEntityTypeAttributes( Collections.singletonList( trackedEntityTypeAttribute ) );
 
-        when( validationContext.getTrackedEntityAttribute( "trackedEntityAttribute" ) )
-            .thenReturn( trackedEntityAttribute );
+        when( validationContext.getBundle().getPreheat().<TrackedEntityAttribute> get( TrackedEntityAttribute.class,
+            "trackedEntityAttribute" ) )
+                .thenReturn( trackedEntityAttribute );
 
-        when( validationContext.getTrackedEntityType( anyString() ) ).thenReturn( trackedEntityType );
+        when(
+            validationContext.getBundle().getPreheat().<TrackedEntityType> get( TrackedEntityType.class, anyString() ) )
+                .thenReturn( trackedEntityType );
 
         ValidationErrorReporter reporter = new ValidationErrorReporter( validationContext );
         trackedEntityAttributeValidationHook.validateTrackedEntity( reporter,

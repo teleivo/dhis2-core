@@ -60,8 +60,8 @@ public class PreCheckUpdatableFieldsValidationHook
     {
         TrackerImportValidationContext context = reporter.getValidationContext();
 
-        TrackedEntityInstance trackedEntityInstance = context
-            .getTrackedEntityInstance( trackedEntity.getTrackedEntity() );
+        TrackedEntityInstance trackedEntityInstance = context.getBundle().getPreheat()
+            .getTrackedEntity( context.getBundle().getIdentifier(), trackedEntity.getTrackedEntity() );
 
         addErrorIf( () -> !trackedEntityInstance.getTrackedEntityType().getUid()
             .equals( trackedEntity.getTrackedEntityType() ), reporter, TrackerType.TRACKED_ENTITY,
@@ -73,7 +73,8 @@ public class PreCheckUpdatableFieldsValidationHook
     {
         TrackerImportValidationContext context = reporter.getValidationContext();
 
-        ProgramInstance pi = context.getProgramInstance( enrollment.getEnrollment() );
+        ProgramInstance pi = context.getBundle().getPreheat().getEnrollment( context.getBundle().getIdentifier(),
+            enrollment.getEnrollment() );
         Program program = pi.getProgram();
         TrackedEntityInstance trackedEntityInstance = pi.getEntityInstance();
 
@@ -89,7 +90,8 @@ public class PreCheckUpdatableFieldsValidationHook
     {
         TrackerImportValidationContext context = reporter.getValidationContext();
 
-        ProgramStageInstance programStageInstance = context.getProgramStageInstance( event.getEvent() );
+        ProgramStageInstance programStageInstance = context.getBundle().getPreheat()
+            .getEvent( context.getBundle().getIdentifier(), event.getEvent() );
         ProgramStage programStage = programStageInstance.getProgramStage();
         ProgramInstance programInstance = programStageInstance.getProgramInstance();
 

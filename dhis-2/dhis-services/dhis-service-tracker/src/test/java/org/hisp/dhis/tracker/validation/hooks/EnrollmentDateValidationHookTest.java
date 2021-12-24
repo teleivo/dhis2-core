@@ -83,7 +83,8 @@ class EnrollmentDateValidationHookTest
 
         ValidationErrorReporter reporter = new ValidationErrorReporter( validationContext );
 
-        when( validationContext.getProgram( enrollment.getProgram() ) ).thenReturn( new Program() );
+        when( validationContext.getBundle().getPreheat().<Program> get( Program.class, enrollment.getProgram() ) )
+            .thenReturn( new Program() );
 
         this.hookToTest.validateEnrollment( reporter, enrollment );
 
@@ -103,7 +104,8 @@ class EnrollmentDateValidationHookTest
 
         ValidationErrorReporter reporter = new ValidationErrorReporter( validationContext );
 
-        when( validationContext.getProgram( enrollment.getProgram() ) ).thenReturn( new Program() );
+        when( validationContext.getBundle().getPreheat().<Program> get( Program.class, enrollment.getProgram() ) )
+            .thenReturn( new Program() );
 
         this.hookToTest.validateEnrollment( reporter, enrollment );
 
@@ -123,7 +125,8 @@ class EnrollmentDateValidationHookTest
 
         ValidationErrorReporter reporter = new ValidationErrorReporter( validationContext );
 
-        when( validationContext.getProgram( enrollment.getProgram() ) ).thenReturn( new Program() );
+        when( validationContext.getBundle().getPreheat().<Program> get( Program.class, enrollment.getProgram() ) )
+            .thenReturn( new Program() );
 
         this.hookToTest.validateEnrollment( reporter, enrollment );
 
@@ -145,7 +148,8 @@ class EnrollmentDateValidationHookTest
         Program program = new Program();
         program.setSelectEnrollmentDatesInFuture( true );
         program.setSelectIncidentDatesInFuture( true );
-        when( validationContext.getProgram( enrollment.getProgram() ) ).thenReturn( program );
+        when( validationContext.getBundle().getPreheat().<Program> get( Program.class, enrollment.getProgram() ) )
+            .thenReturn( program );
 
         this.hookToTest.validateEnrollment( reporter, enrollment );
 
@@ -165,7 +169,8 @@ class EnrollmentDateValidationHookTest
 
         Program program = new Program();
         program.setDisplayIncidentDate( true );
-        when( validationContext.getProgram( enrollment.getProgram() ) ).thenReturn( program );
+        when( validationContext.getBundle().getPreheat().<Program> get( Program.class, enrollment.getProgram() ) )
+            .thenReturn( program );
 
         this.hookToTest.validateEnrollment( reporter, enrollment );
 

@@ -77,7 +77,8 @@ class EnrollmentGeoValidationHookTest
 
         Program program = new Program();
         program.setFeatureType( FeatureType.POINT );
-        when( validationContext.getProgram( PROGRAM ) ).thenReturn( program );
+        when( validationContext.getBundle().getPreheat().<Program> get( Program.class, PROGRAM ) )
+            .thenReturn( program );
     }
 
     @Test
@@ -123,7 +124,8 @@ class EnrollmentGeoValidationHookTest
 
         // when
         Program program = new Program();
-        when( validationContext.getProgram( PROGRAM ) ).thenReturn( program );
+        when( validationContext.getBundle().getPreheat().<Program> get( Program.class, PROGRAM ) )
+            .thenReturn( program );
 
         this.hookToTest.validateEnrollment( reporter, enrollment );
 
@@ -145,7 +147,8 @@ class EnrollmentGeoValidationHookTest
         // when
         Program program = new Program();
         program.setFeatureType( FeatureType.NONE );
-        when( validationContext.getProgram( PROGRAM ) ).thenReturn( program );
+        when( validationContext.getBundle().getPreheat().<Program> get( Program.class, PROGRAM ) )
+            .thenReturn( program );
 
         this.hookToTest.validateEnrollment( reporter, enrollment );
 
@@ -167,7 +170,8 @@ class EnrollmentGeoValidationHookTest
         // when
         Program program = new Program();
         program.setFeatureType( FeatureType.MULTI_POLYGON );
-        when( validationContext.getProgram( PROGRAM ) ).thenReturn( program );
+        when( validationContext.getBundle().getPreheat().<Program> get( Program.class, PROGRAM ) )
+            .thenReturn( program );
 
         this.hookToTest.validateEnrollment( reporter, enrollment );
 

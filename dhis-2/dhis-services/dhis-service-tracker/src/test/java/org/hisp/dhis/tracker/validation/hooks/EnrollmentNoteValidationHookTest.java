@@ -91,7 +91,8 @@ class EnrollmentNoteValidationHookTest
         when( ctx.getBundle() ).thenReturn( trackerBundle );
         when( trackerBundle.getValidationMode() ).thenReturn( ValidationMode.FULL );
         when( trackerBundle.getPreheat() ).thenReturn( preheat );
-        when( ctx.getNote( note.getNote() ) ).thenReturn( Optional.of( new TrackedEntityComment() ) );
+        when( ctx.getBundle().getPreheat().getNote( note.getNote() ) )
+            .thenReturn( Optional.of( new TrackedEntityComment() ) );
         ValidationErrorReporter reporter = new ValidationErrorReporter( ctx );
 
         enrollment.setNotes( Collections.singletonList( note ) );
@@ -118,7 +119,8 @@ class EnrollmentNoteValidationHookTest
 
         when( ctx.getBundle() ).thenReturn( trackerBundle );
         when( trackerBundle.getValidationMode() ).thenReturn( ValidationMode.FULL );
-        when( ctx.getNote( note.getNote() ) ).thenReturn( Optional.of( new TrackedEntityComment() ) );
+        when( ctx.getBundle().getPreheat().getNote( note.getNote() ) )
+            .thenReturn( Optional.of( new TrackedEntityComment() ) );
         ValidationErrorReporter reporter = new ValidationErrorReporter( ctx );
 
         enrollment.setNotes( Collections.singletonList( note ) );

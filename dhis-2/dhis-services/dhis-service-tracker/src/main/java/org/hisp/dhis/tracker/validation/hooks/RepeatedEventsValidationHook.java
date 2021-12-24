@@ -38,6 +38,7 @@ import org.hisp.dhis.tracker.TrackerImportStrategy;
 import org.hisp.dhis.tracker.TrackerType;
 import org.hisp.dhis.tracker.bundle.TrackerBundle;
 import org.hisp.dhis.tracker.domain.Event;
+import org.hisp.dhis.tracker.domain.TrackerDto;
 import org.hisp.dhis.tracker.report.TrackerErrorCode;
 import org.hisp.dhis.tracker.report.ValidationErrorReporter;
 import org.hisp.dhis.tracker.validation.TrackerImportValidationContext;
@@ -61,9 +62,11 @@ public class RepeatedEventsValidationHook
         Map<Pair<String, String>, List<Event>> eventsByEnrollmentAndNotRepeatableProgramStage = bundle.getEvents()
             .stream()
             .filter( e -> !reporter.isInvalid( e ) )
-            .filter( e -> !context.getStrategy( e ).isDelete() )
+            .filter( e -> !context.getBundle().getResolvedStrategyMap().get( ((TrackerDto) e).getTrackerType() )
+                .get( ((TrackerDto) e).getUid() ).isDelete() )
             .filter( e -> {
-                ProgramStage programStage = context.getProgramStage( e.getProgramStage() );
+                ProgramStage programStage = context.getBundle().getPreheat().get( ProgramStage.class,
+                    e.getProgramStage() );
                 return programStage.getProgram().isRegistration() && !programStage.getRepeatable();
             } )
             .collect( Collectors.groupingBy( e -> Pair.of( e.getProgramStage(), e.getEnrollment() ) ) );
@@ -88,14 +91,17 @@ public class RepeatedEventsValidationHook
     private void validateNotMultipleEvents( ValidationErrorReporter reporter,
         TrackerImportValidationContext context, Event event )
     {
-        ProgramInstance programInstance = context.getProgramInstance( event.getEnrollment() );
-        ProgramStage programStage = context.getProgramStage( event.getProgramStage() );
+        ProgramInstance programInstance = context.getBundle().getPreheat()
+            .getEnrollment( context.getBundle().getIdentifier(), event.getEnrollment() );
+        ProgramStage programStage = context.getBundle().getPreheat().get( ProgramStage.class, event.getProgramStage() );
 
-        TrackerImportStrategy strategy = context.getStrategy( event );
+        TrackerImportStrategy strategy = context.getBundle().getResolvedStrategyMap()
+            .get( ((TrackerDto) event).getTrackerType() ).get( ((TrackerDto) event).getUid() );
 
         if ( strategy == TrackerImportStrategy.CREATE && programStage != null && programInstance != null
             && !programStage.getRepeatable()
-            && context.programStageHasEvents( programStage.getUid(), programInstance.getUid() ) )
+            && context.getBundle().getPreheat().getProgramStageWithEvents()
+                .contains( Pair.of( programStage.getUid(), programInstance.getUid() ) ) )
         {
             addError( reporter, TrackerType.EVENT, event.getUid(), TrackerErrorCode.E1039, event.getProgramStage() );
         }

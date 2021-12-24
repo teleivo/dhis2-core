@@ -104,7 +104,9 @@ class EnrollmentInExistingValidationHookTest
         when( enrollment.getEnrollment() ).thenReturn( enrollmentUid );
         when( enrollment.getUid() ).thenReturn( enrollmentUid );
 
-        when( validationContext.getTrackedEntityInstance( trackedEntity ) ).thenReturn( trackedEntityInstance );
+        when( validationContext.getBundle().getPreheat()
+            .getTrackedEntity( validationContext.getBundle().getIdentifier(), trackedEntity ) )
+                .thenReturn( trackedEntityInstance );
         when( trackedEntityInstance.getUid() ).thenReturn( trackedEntity );
 
         when( validationContext.getBundle() ).thenReturn( bundle );
@@ -113,7 +115,8 @@ class EnrollmentInExistingValidationHookTest
         program.setOnlyEnrollOnce( false );
         program.setUid( programUid );
 
-        when( validationContext.getProgram( programUid ) ).thenReturn( program );
+        when( validationContext.getBundle().getPreheat().<Program> get( Program.class, programUid ) )
+            .thenReturn( program );
         reporter = new ValidationErrorReporter( validationContext );
     }
 
@@ -123,7 +126,7 @@ class EnrollmentInExistingValidationHookTest
         when( enrollment.getStatus() ).thenReturn( EnrollmentStatus.CANCELLED );
         hookToTest.validateEnrollment( reporter, enrollment );
 
-        verify( validationContext, times( 0 ) ).getProgram( programUid );
+        verify( validationContext, times( 0 ) ).getBundle().getPreheat().get( Program.class, programUid );
     }
 
     @Test
@@ -140,7 +143,8 @@ class EnrollmentInExistingValidationHookTest
         Program program = new Program();
         program.setOnlyEnrollOnce( false );
 
-        when( validationContext.getProgram( programUid ) ).thenReturn( program );
+        when( validationContext.getBundle().getPreheat().<Program> get( Program.class, programUid ) )
+            .thenReturn( program );
         when( enrollment.getStatus() ).thenReturn( EnrollmentStatus.COMPLETED );
         hookToTest.validateEnrollment( reporter, enrollment );
 
@@ -153,7 +157,8 @@ class EnrollmentInExistingValidationHookTest
         Program program = new Program();
         program.setOnlyEnrollOnce( true );
 
-        when( validationContext.getProgram( programUid ) ).thenReturn( program );
+        when( validationContext.getBundle().getPreheat().<Program> get( Program.class, programUid ) )
+            .thenReturn( program );
 
         when( enrollment.getTrackedEntity() ).thenReturn( null );
         assertThrows( NullPointerException.class,
@@ -166,7 +171,8 @@ class EnrollmentInExistingValidationHookTest
         Program program = new Program();
         program.setOnlyEnrollOnce( true );
 
-        when( validationContext.getProgram( programUid ) ).thenReturn( program );
+        when( validationContext.getBundle().getPreheat().<Program> get( Program.class, programUid ) )
+            .thenReturn( program );
 
         hookToTest.validateEnrollment( reporter, enrollment );
 
@@ -193,7 +199,8 @@ class EnrollmentInExistingValidationHookTest
         program.setUid( programUid );
         program.setOnlyEnrollOnce( true );
 
-        when( validationContext.getProgram( programUid ) ).thenReturn( program );
+        when( validationContext.getBundle().getPreheat().<Program> get( Program.class, programUid ) )
+            .thenReturn( program );
         setEnrollmentInPayload( EnrollmentStatus.COMPLETED );
 
         hookToTest.validateEnrollment( reporter, enrollment );
@@ -234,7 +241,8 @@ class EnrollmentInExistingValidationHookTest
         program.setUid( programUid );
         program.setOnlyEnrollOnce( true );
 
-        when( validationContext.getProgram( programUid ) ).thenReturn( program );
+        when( validationContext.getBundle().getPreheat().<Program> get( Program.class, programUid ) )
+            .thenReturn( program );
         setTeiInDb( ProgramStatus.COMPLETED );
 
         hookToTest.validateEnrollment( reporter, enrollment );
@@ -261,7 +269,8 @@ class EnrollmentInExistingValidationHookTest
         program.setUid( programUid );
         program.setOnlyEnrollOnce( true );
 
-        when( validationContext.getProgram( programUid ) ).thenReturn( program );
+        when( validationContext.getBundle().getPreheat().<Program> get( Program.class, programUid ) )
+            .thenReturn( program );
         setEnrollmentInPayload( EnrollmentStatus.COMPLETED );
         setTeiInDb();
 
@@ -279,7 +288,8 @@ class EnrollmentInExistingValidationHookTest
         program.setUid( programUid );
         program.setOnlyEnrollOnce( false );
 
-        when( validationContext.getProgram( programUid ) ).thenReturn( program );
+        when( validationContext.getBundle().getPreheat().<Program> get( Program.class, programUid ) )
+            .thenReturn( program );
         setEnrollmentInPayload( EnrollmentStatus.COMPLETED );
         setTeiInDb();
 

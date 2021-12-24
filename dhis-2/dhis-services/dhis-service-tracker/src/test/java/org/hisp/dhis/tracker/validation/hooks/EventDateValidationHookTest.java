@@ -95,11 +95,12 @@ class EventDateValidationHookTest extends DhisConvenienceTest
 
         when( validationContext.getBundle() ).thenReturn( bundle );
 
-        when( validationContext.getProgram( PROGRAM_WITH_REGISTRATION_ID ) )
+        when( validationContext.getBundle().getPreheat().<Program> get( Program.class, PROGRAM_WITH_REGISTRATION_ID ) )
             .thenReturn( getProgramWithRegistration() );
 
-        when( validationContext.getProgram( PROGRAM_WITHOUT_REGISTRATION_ID ) )
-            .thenReturn( getProgramWithoutRegistration() );
+        when(
+            validationContext.getBundle().getPreheat().<Program> get( Program.class, PROGRAM_WITHOUT_REGISTRATION_ID ) )
+                .thenReturn( getProgramWithoutRegistration() );
     }
 
     @Test

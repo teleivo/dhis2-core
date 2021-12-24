@@ -164,7 +164,8 @@ public abstract class AbstractTrackerDtoValidationHook
         while ( iter.hasNext() )
         {
             TrackerDto dto = iter.next();
-            if ( needsToRun( context.getStrategy( dto ) ) )
+            if ( needsToRun(
+                context.getBundle().getResolvedStrategyMap().get( dto.getTrackerType() ).get( dto.getUid() ) ) )
             {
                 validationMap.get( dto.getTrackerType() ).accept( reporter, dto );
                 if ( removeOnError() && didNotPassValidation( reporter, dto ) )

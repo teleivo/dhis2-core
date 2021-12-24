@@ -66,7 +66,7 @@ public class EventDataValuesValidationHook
     {
         TrackerImportValidationContext context = reporter.getValidationContext();
 
-        ProgramStage programStage = context.getProgramStage( event.getProgramStage() );
+        ProgramStage programStage = context.getBundle().getPreheat().get( ProgramStage.class, event.getProgramStage() );
 
         checkNotNull( programStage, TrackerImporterAssertErrors.PROGRAM_STAGE_CANT_BE_NULL );
 
@@ -74,7 +74,8 @@ public class EventDataValuesValidationHook
         {
             // event dates (createdAt, updatedAt) are ignored and set by the
             // system
-            DataElement dataElement = context.getDataElement( dataValue.getDataElement() );
+            DataElement dataElement = context.getBundle().getPreheat().get( DataElement.class,
+                dataValue.getDataElement() );
 
             if ( dataElement == null )
             {
@@ -99,7 +100,8 @@ public class EventDataValuesValidationHook
     {
         if ( StringUtils.isNotEmpty( event.getProgramStage() ) )
         {
-            ProgramStage programStage = context.getProgramStage( event.getProgramStage() );
+            ProgramStage programStage = context.getBundle().getPreheat().get( ProgramStage.class,
+                event.getProgramStage() );
             final List<String> mandatoryDataElements = programStage.getProgramStageDataElements()
                 .stream()
                 .filter( ProgramStageDataElement::isCompulsory )
@@ -185,7 +187,8 @@ public class EventDataValuesValidationHook
             return;
         }
 
-        FileResource fileResource = reporter.getValidationContext().getFileResource( dataValue.getValue() );
+        FileResource fileResource = reporter.getValidationContext().getBundle().getPreheat().get( FileResource.class,
+            dataValue.getValue() );
 
         addErrorIfNull( fileResource, reporter, TrackerType.EVENT, eventUid, E1084, dataValue.getValue() );
         addErrorIf( () -> fileResource != null && fileResource.isAssigned(), reporter, TrackerType.EVENT, eventUid,

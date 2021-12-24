@@ -84,7 +84,8 @@ class AssignedUserValidationHookTest
 
         ProgramStage programStage = new ProgramStage();
         programStage.setEnableUserAssignment( true );
-        when( validationContext.getProgramStage( PROGRAM_STAGE ) ).thenReturn( programStage );
+        when( validationContext.getBundle().getPreheat().<ProgramStage> get( ProgramStage.class, PROGRAM_STAGE ) )
+            .thenReturn( programStage );
     }
 
     @Test
@@ -158,7 +159,8 @@ class AssignedUserValidationHookTest
         // when
         ProgramStage programStage = new ProgramStage();
         programStage.setEnableUserAssignment( false );
-        when( validationContext.getProgramStage( PROGRAM_STAGE ) ).thenReturn( programStage );
+        when( validationContext.getBundle().getPreheat().<ProgramStage> get( ProgramStage.class, PROGRAM_STAGE ) )
+            .thenReturn( programStage );
 
         this.hookToTest.validateEvent( reporter, event );
 
@@ -184,7 +186,8 @@ class AssignedUserValidationHookTest
         // when
         ProgramStage programStage = new ProgramStage();
         programStage.setEnableUserAssignment( null );
-        when( validationContext.getProgramStage( PROGRAM_STAGE ) ).thenReturn( programStage );
+        when( validationContext.getBundle().getPreheat().<ProgramStage> get( ProgramStage.class, PROGRAM_STAGE ) )
+            .thenReturn( programStage );
 
         this.hookToTest.validateEvent( reporter, event );
 

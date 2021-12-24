@@ -28,35 +28,14 @@
 package org.hisp.dhis.tracker.validation;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
 import lombok.Data;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.tuple.Pair;
-import org.hisp.dhis.category.CategoryOption;
 import org.hisp.dhis.category.CategoryOptionCombo;
-import org.hisp.dhis.dataelement.DataElement;
-import org.hisp.dhis.fileresource.FileResource;
-import org.hisp.dhis.organisationunit.OrganisationUnit;
-import org.hisp.dhis.program.Program;
-import org.hisp.dhis.program.ProgramInstance;
-import org.hisp.dhis.program.ProgramStage;
-import org.hisp.dhis.program.ProgramStageInstance;
-import org.hisp.dhis.relationship.RelationshipType;
-import org.hisp.dhis.trackedentity.TrackedEntityAttribute;
-import org.hisp.dhis.trackedentity.TrackedEntityInstance;
-import org.hisp.dhis.trackedentity.TrackedEntityProgramOwnerOrgUnit;
-import org.hisp.dhis.trackedentity.TrackedEntityType;
-import org.hisp.dhis.trackedentitycomment.TrackedEntityComment;
-import org.hisp.dhis.tracker.TrackerIdentifierParams;
-import org.hisp.dhis.tracker.TrackerImportStrategy;
 import org.hisp.dhis.tracker.bundle.TrackerBundle;
-import org.hisp.dhis.tracker.domain.Relationship;
-import org.hisp.dhis.tracker.domain.TrackerDto;
-import org.hisp.dhis.tracker.preheat.ReferenceTrackerEntity;
 
 import com.google.common.base.Preconditions;
 
@@ -75,13 +54,7 @@ public class TrackerImportValidationContext
 
     public TrackerImportValidationContext( TrackerBundle bundle )
     {
-        // Create a copy of the bundle
         this.bundle = bundle;
-    }
-
-    public TrackerImportStrategy getStrategy( TrackerDto dto )
-    {
-        return bundle.getResolvedStrategyMap().get( dto.getTrackerType() ).get( dto.getUid() );
     }
 
     public void cacheEventCategoryOptionCombo( String key, CategoryOptionCombo categoryOptionCombo )
@@ -115,124 +88,5 @@ public class TrackerImportValidationContext
             return Optional.empty();
         }
         return Optional.of( cached );
-    }
-
-    public OrganisationUnit getOrganisationUnit( String id )
-    {
-        return bundle.getPreheat().get( OrganisationUnit.class, id );
-    }
-
-    public TrackedEntityInstance getTrackedEntityInstance( String id )
-    {
-        return bundle.getPreheat().getTrackedEntity( bundle.getIdentifier(), id );
-    }
-
-    public TrackedEntityAttribute getTrackedEntityAttribute( String id )
-    {
-        return bundle.getPreheat().get( TrackedEntityAttribute.class, id );
-    }
-
-    public DataElement getDataElement( String id )
-    {
-        return bundle.getPreheat().get( DataElement.class, id );
-    }
-
-    public TrackedEntityType getTrackedEntityType( String id )
-    {
-        return bundle.getPreheat().get( TrackedEntityType.class, id );
-    }
-
-    public RelationshipType getRelationShipType( String id )
-    {
-        return bundle.getPreheat().get( RelationshipType.class, id );
-    }
-
-    public Program getProgram( String id )
-    {
-        return bundle.getPreheat().get( Program.class, id );
-    }
-
-    public ProgramInstance getProgramInstance( String id )
-    {
-        return bundle.getPreheat().getEnrollment( bundle.getIdentifier(), id );
-    }
-
-    public OrganisationUnit getOwnerOrganisationUnit( String teiUid, String programUid )
-    {
-        Map<String, TrackedEntityProgramOwnerOrgUnit> programOwner = bundle.getPreheat().getProgramOwner()
-            .get( teiUid );
-        if ( programOwner == null || programOwner.get( programUid ) == null )
-        {
-            return null;
-        }
-        else
-        {
-            return programOwner.get( programUid ).getOrganisationUnit();
-        }
-    }
-
-    public boolean programInstanceHasEvents( String programInstanceUid )
-    {
-        return bundle.getPreheat().getProgramInstanceWithOneOrMoreNonDeletedEvent().contains( programInstanceUid );
-    }
-
-    public boolean programStageHasEvents( String programStageUid, String enrollmentUid )
-    {
-        return bundle.getPreheat().getProgramStageWithEvents().contains( Pair.of( programStageUid, enrollmentUid ) );
-    }
-
-    public Optional<TrackedEntityComment> getNote( String uid )
-    {
-        return bundle.getPreheat().getNote( uid );
-    }
-
-    public ProgramStage getProgramStage( String id )
-    {
-        return bundle.getPreheat().get( ProgramStage.class, id );
-    }
-
-    public ProgramStageInstance getProgramStageInstance( String event )
-    {
-        return bundle.getPreheat().getEvent( bundle.getIdentifier(), event );
-    }
-
-    public org.hisp.dhis.relationship.Relationship getRelationship( Relationship relationship )
-    {
-        return bundle.getPreheat().getRelationship( bundle.getIdentifier(), relationship );
-    }
-
-    public CategoryOptionCombo getCategoryOptionCombo( String id )
-    {
-        return bundle.getPreheat().get( CategoryOptionCombo.class, id );
-    }
-
-    public CategoryOption getCategoryOption( String id )
-    {
-        return bundle.getPreheat().get( CategoryOption.class, id );
-    }
-
-    public boolean usernameExists( String username )
-    {
-        return bundle.getPreheat().getUsers().containsKey( username );
-    }
-
-    public FileResource getFileResource( String id )
-    {
-        return bundle.getPreheat().get( FileResource.class, id );
-    }
-
-    public Optional<ReferenceTrackerEntity> getReference( String uid )
-    {
-        return bundle.getPreheat().getReference( uid );
-    }
-
-    public TrackerIdentifierParams getIdentifiers()
-    {
-        return bundle.getPreheat().getIdentifiers();
-    }
-
-    public Map<String, List<String>> getProgramWithOrgUnitsMap()
-    {
-        return bundle.getPreheat().getProgramWithOrgUnitsMap();
     }
 }

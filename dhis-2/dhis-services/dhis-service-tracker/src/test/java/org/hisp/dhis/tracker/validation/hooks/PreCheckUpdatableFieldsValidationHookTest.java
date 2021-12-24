@@ -51,6 +51,7 @@ import org.hisp.dhis.tracker.bundle.TrackerBundle;
 import org.hisp.dhis.tracker.domain.Enrollment;
 import org.hisp.dhis.tracker.domain.Event;
 import org.hisp.dhis.tracker.domain.TrackedEntity;
+import org.hisp.dhis.tracker.domain.TrackerDto;
 import org.hisp.dhis.tracker.report.ValidationErrorReporter;
 import org.hisp.dhis.tracker.validation.TrackerImportValidationContext;
 import org.junit.jupiter.api.BeforeEach;
@@ -97,13 +98,22 @@ class PreCheckUpdatableFieldsValidationHookTest
         when( ctx.getBundle() ).thenReturn( bundle );
         when( ctx.getBundle().getImportStrategy() ).thenReturn( TrackerImportStrategy.CREATE_AND_UPDATE );
 
-        when( ctx.getStrategy( any( TrackedEntity.class ) ) ).thenReturn( TrackerImportStrategy.UPDATE );
-        when( ctx.getStrategy( any( Enrollment.class ) ) ).thenReturn( TrackerImportStrategy.UPDATE );
-        when( ctx.getStrategy( any( Event.class ) ) ).thenReturn( TrackerImportStrategy.UPDATE );
+        TrackerDto dto2 = any( TrackedEntity.class );
+        when( ctx.getBundle().getResolvedStrategyMap().get( dto2.getTrackerType() ).get( dto2.getUid() ) )
+            .thenReturn( TrackerImportStrategy.UPDATE );
+        TrackerDto dto1 = any( Enrollment.class );
+        when( ctx.getBundle().getResolvedStrategyMap().get( dto1.getTrackerType() ).get( dto1.getUid() ) )
+            .thenReturn( TrackerImportStrategy.UPDATE );
+        TrackerDto dto = any( Event.class );
+        when( ctx.getBundle().getResolvedStrategyMap().get( dto.getTrackerType() ).get( dto.getUid() ) )
+            .thenReturn( TrackerImportStrategy.UPDATE );
 
-        when( ctx.getTrackedEntityInstance( TRACKED_ENTITY_ID ) ).thenReturn( trackedEntityInstance() );
-        when( ctx.getProgramInstance( ENROLLMENT_ID ) ).thenReturn( programInstance() );
-        when( ctx.getProgramStageInstance( EVENT_ID ) ).thenReturn( programStageInstance() );
+        when( ctx.getBundle().getPreheat().getTrackedEntity( ctx.getBundle().getIdentifier(), TRACKED_ENTITY_ID ) )
+            .thenReturn( trackedEntityInstance() );
+        when( ctx.getBundle().getPreheat().getEnrollment( ctx.getBundle().getIdentifier(), ENROLLMENT_ID ) )
+            .thenReturn( programInstance() );
+        when( ctx.getBundle().getPreheat().getEvent( ctx.getBundle().getIdentifier(), EVENT_ID ) )
+            .thenReturn( programStageInstance() );
     }
 
     @Test
