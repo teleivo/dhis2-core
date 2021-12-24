@@ -27,8 +27,6 @@
  */
 package org.hisp.dhis.tracker.validation.hooks;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.empty;
 import static org.hisp.dhis.tracker.TrackerType.ENROLLMENT;
 import static org.hisp.dhis.tracker.TrackerType.EVENT;
 import static org.hisp.dhis.tracker.TrackerType.TRACKED_ENTITY;
@@ -444,7 +442,7 @@ class PreCheckExistenceValidationHookTest
 
         // then
         assertFalse( reporter.hasErrors() );
-        assertThat( reporter.getWarningsReportList(), empty() );
+        assertFalse( reporter.hasWarnings() );
     }
 
     @Test

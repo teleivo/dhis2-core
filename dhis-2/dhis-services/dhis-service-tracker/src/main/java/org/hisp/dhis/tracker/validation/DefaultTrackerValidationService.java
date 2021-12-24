@@ -109,6 +109,7 @@ public class DefaultTrackerValidationService
         {
             // exit early when in FAIL_FAST validation mode
         }
+        // TODO(TECH-880) return list
         validationReport.add( reporter.getReportList() );
 
         removeInvalidObjects( bundle, reporter );

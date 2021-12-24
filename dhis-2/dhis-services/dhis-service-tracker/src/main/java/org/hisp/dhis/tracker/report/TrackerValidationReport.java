@@ -29,6 +29,7 @@ package org.hisp.dhis.tracker.report;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Predicate;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -63,6 +64,11 @@ public class TrackerValidationReport
     // Utility Methods
     // -----------------------------------------------------------------------------------
 
+    public void add( TrackerErrorReport error )
+    {
+        this.errorReports.add( error );
+    }
+
     public void add( TrackerValidationReport validationReport )
     {
         add( validationReport.getErrorReports() );
@@ -76,6 +82,11 @@ public class TrackerValidationReport
         {
             addErrorIfNotExisting( errorReport );
         }
+    }
+
+    public void addWarning( TrackerWarningReport warning )
+    {
+        this.warningReports.add( warning );
     }
 
     public void addWarnings( List<TrackerWarningReport> warningReportsReports )
@@ -99,6 +110,21 @@ public class TrackerValidationReport
     public boolean hasErrors()
     {
         return !errorReports.isEmpty();
+    }
+
+    public boolean hasErrorReport( Predicate<TrackerErrorReport> test )
+    {
+        return errorReports.stream().anyMatch( test );
+    }
+
+    public boolean hasWarningReport( Predicate<TrackerWarningReport> test )
+    {
+        return this.warningReports.stream().anyMatch( test );
+    }
+
+    public boolean hasWarnings()
+    {
+        return !this.warningReports.isEmpty();
     }
 
     /**

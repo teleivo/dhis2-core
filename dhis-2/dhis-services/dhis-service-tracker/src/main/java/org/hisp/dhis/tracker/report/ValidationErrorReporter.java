@@ -28,6 +28,7 @@
 package org.hisp.dhis.tracker.report;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -56,9 +57,7 @@ import org.hisp.dhis.tracker.validation.ValidationFailFastException;
 // errors ?
 public class ValidationErrorReporter
 {
-    private final List<TrackerErrorReport> reportList;
-
-    private final List<TrackerWarningReport> warningsReportList;
+    private final TrackerValidationReport report;
 
     private final boolean isFailFast;
 
@@ -77,8 +76,7 @@ public class ValidationErrorReporter
 
     private ValidationErrorReporter()
     {
-        this.warningsReportList = new ArrayList<>();
-        this.reportList = new ArrayList<>();
+        this.report = new TrackerValidationReport();
         this.isFailFast = false;
         this.validationContext = null;
         this.invalidDTOs = new HashMap<>();
@@ -86,47 +84,59 @@ public class ValidationErrorReporter
 
     public ValidationErrorReporter( TrackerImportValidationContext context )
     {
+        this.report = new TrackerValidationReport();
         this.validationContext = context;
-        this.reportList = new ArrayList<>();
-        this.warningsReportList = new ArrayList<>();
         this.isFailFast = validationContext.getBundle().getValidationMode() == ValidationMode.FAIL_FAST;
         this.invalidDTOs = new HashMap<>();
     }
 
     public boolean hasErrors()
     {
-        return !this.reportList.isEmpty();
+        return this.report.hasErrors();
     }
 
     public boolean hasErrorReport( Predicate<TrackerErrorReport> test )
     {
-        return reportList.stream().anyMatch( test );
+        return this.report.hasErrorReport( test );
     }
 
     public boolean hasWarningReport( Predicate<TrackerWarningReport> test )
     {
-        return warningsReportList.stream().anyMatch( test );
+        return this.report.hasWarningReport( test );
     }
 
     public boolean hasWarnings()
     {
-        return !this.warningsReportList.isEmpty();
+        return this.report.hasWarnings();
     }
 
     public void addError( TrackerErrorReport error )
     {
-        getReportList().add( error );
+        this.report.add( error );
         this.invalidDTOs.computeIfAbsent( error.getTrackerType(), k -> new ArrayList<>() ).add( error.getUid() );
 
         if ( isFailFast() )
         {
-            throw new ValidationFailFastException( getReportList() );
+            // TODO(TECH-880) we do not need to pass the error report via the
+            // exception
+            // there is only one error report anymore which contains all errors.
+            throw new ValidationFailFastException( this.getReport().getErrorReports() );
         }
     }
 
     public void addWarning( TrackerWarningReport warning )
     {
-        getWarningsReportList().add( warning );
+        this.report.addWarning( warning );
+    }
+
+    // TODO(TECH-880) investigate if we can replace this
+    // client code is interested in size(), isEmpty(), and finding a specific
+    // error
+    // this can, is already at least partially provided by
+    // TrackerValidationReport
+    public List<TrackerErrorReport> getReportList()
+    {
+        return Collections.unmodifiableList( this.report.getErrorReports() );
     }
 
     /**

@@ -167,7 +167,7 @@ public abstract class AbstractTrackerDtoValidationHook
             if ( needsToRun( context.getStrategy( dto ) ) )
             {
                 validationMap.get( dto.getTrackerType() ).accept( reporter, dto );
-                if ( removeOnError() && didNotPassValidation( reporter, dto.getUid() ) )
+                if ( removeOnError() && didNotPassValidation( reporter, dto ) )
                 {
                     iter.remove();
                 }
@@ -234,8 +234,8 @@ public abstract class AbstractTrackerDtoValidationHook
         return false;
     }
 
-    private boolean didNotPassValidation( ValidationErrorReporter reporter, String uid )
+    private boolean didNotPassValidation( ValidationErrorReporter reporter, TrackerDto dto )
     {
-        return reporter.getReportList().stream().anyMatch( r -> r.getUid().equals( uid ) );
+        return reporter.isInvalid( dto );
     }
 }
