@@ -38,7 +38,6 @@ import lombok.Data;
 import org.hisp.dhis.tracker.TrackerType;
 import org.hisp.dhis.tracker.ValidationMode;
 import org.hisp.dhis.tracker.domain.TrackerDto;
-import org.hisp.dhis.tracker.preheat.TrackerPreheat;
 import org.hisp.dhis.tracker.validation.TrackerImportValidationContext;
 import org.hisp.dhis.tracker.validation.ValidationFailFastException;
 
@@ -142,10 +141,5 @@ public class ValidationErrorReporter
     public boolean isInvalid( TrackerDto dto )
     {
         return this.isInvalid( dto.getTrackerType(), dto.getUid() );
-    }
-
-    public TrackerPreheat getPreheat()
-    {
-        return this.getValidationContext().getBundle().getPreheat();
     }
 }
