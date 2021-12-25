@@ -25,7 +25,7 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package org.hisp.dhis.tracker.validation.spike.one.hooks;
+package org.hisp.dhis.tracker.validation.spike.base.hooks;
 
 import java.util.Optional;
 
@@ -34,7 +34,7 @@ import org.hisp.dhis.tracker.bundle.TrackerBundle;
 import org.hisp.dhis.tracker.domain.TrackerDto;
 import org.hisp.dhis.tracker.report.TrackerErrorCode;
 import org.hisp.dhis.tracker.report.TrackerErrorReport;
-import org.hisp.dhis.tracker.validation.spike.one.ValidationHook;
+import org.hisp.dhis.tracker.validation.spike.base.ValidationHook;
 
 public class UidValidationHook implements ValidationHook<TrackerDto>
 {

@@ -25,7 +25,7 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package org.hisp.dhis.tracker.validation.spike.one;
+package org.hisp.dhis.tracker.validation.spike.base;
 
 import java.util.List;
 import java.util.Optional;
@@ -43,6 +43,11 @@ import org.hisp.dhis.tracker.report.TrackerValidationReport;
 public class SpikeValidationService implements ValidationService
 {
 
+    // TODO how can I have one collection of hooks setup in a declarative way in
+    // the ServiceConfig
+    // and then only dispatch the wanted type to the hook? again with
+    // instanceof?
+    // or would I best split the hooks per type?
     private final List<ValidationHook> hooks;
 
     public TrackerValidationReport validate( TrackerBundle bundle )
@@ -75,7 +80,7 @@ public class SpikeValidationService implements ValidationService
     {
         for ( ValidationHook hook : hooks )
         {
-            Optional<TrackerReportItem> item = hook.validate( bundle, event );
+            Optional<? extends TrackerReportItem> item = hook.validate( bundle, event );
             if ( item.isPresent() )
             {
                 report.add( item.get() );

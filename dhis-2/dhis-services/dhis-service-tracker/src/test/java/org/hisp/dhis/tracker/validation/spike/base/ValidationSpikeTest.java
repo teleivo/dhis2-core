@@ -25,7 +25,7 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package org.hisp.dhis.tracker.validation.spike.one;
+package org.hisp.dhis.tracker.validation.spike.base;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -36,6 +36,7 @@ import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.hisp.dhis.common.CodeGenerator;
 import org.hisp.dhis.tracker.TrackerType;
@@ -45,9 +46,10 @@ import org.hisp.dhis.tracker.domain.Enrollment;
 import org.hisp.dhis.tracker.domain.Event;
 import org.hisp.dhis.tracker.preheat.TrackerPreheat;
 import org.hisp.dhis.tracker.report.TrackerErrorCode;
+import org.hisp.dhis.tracker.report.TrackerErrorReport;
 import org.hisp.dhis.tracker.report.TrackerValidationReport;
-import org.hisp.dhis.tracker.validation.spike.one.hooks.AssignedUserValidationHook;
-import org.hisp.dhis.tracker.validation.spike.one.hooks.UidValidationHook;
+import org.hisp.dhis.tracker.validation.spike.base.hooks.AssignedUserValidationHook;
+import org.hisp.dhis.tracker.validation.spike.base.hooks.UidValidationHook;
 import org.hisp.dhis.user.User;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Disabled;
@@ -143,7 +145,14 @@ class ValidationSpikeTest
             .build();
 
         ValidationHook hook2 = mock( ValidationHook.class );
-        ValidationService validationService = new SpikeValidationService( List.of( new UidValidationHook(), hook2 ) );
+        ValidationService validationService = new SpikeValidationService( List.of(
+            new UidValidationHook(),
+            hook2,
+            ( b, e ) -> Optional.of( TrackerErrorReport.builder()
+                .errorCode( TrackerErrorCode.E1048 )
+                .uid( e.getUid() )
+                .trackerType( e.getTrackerType() )
+                .build( b ) ) ) );
 
         TrackerValidationReport report = validationService.validate( bundle );
 

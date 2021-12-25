@@ -25,7 +25,7 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package org.hisp.dhis.tracker.validation.spike.one.hooks;
+package org.hisp.dhis.tracker.validation.spike.base.hooks;
 
 import static org.hisp.dhis.tracker.report.TrackerErrorCode.E1118;
 import static org.hisp.dhis.tracker.report.TrackerErrorCode.E1120;
@@ -39,7 +39,7 @@ import org.hisp.dhis.tracker.bundle.TrackerBundle;
 import org.hisp.dhis.tracker.domain.Event;
 import org.hisp.dhis.tracker.report.TrackerErrorReport;
 import org.hisp.dhis.tracker.report.TrackerWarningReport;
-import org.hisp.dhis.tracker.validation.spike.one.ValidationHook;
+import org.hisp.dhis.tracker.validation.spike.base.ValidationHook;
 import org.hisp.dhis.user.User;
 import org.springframework.stereotype.Component;
 
@@ -70,7 +70,7 @@ public class AssignedUserValidationHook implements ValidationHook<Event>
     }
 
     // TODO second hook. how to hook this one in :)
-    public Optional<TrackerWarningReport> validate2( TrackerBundle bundle, Event event )
+    public static Optional<TrackerWarningReport> validateUserAssignmentIsEnabled( TrackerBundle bundle, Event event )
     {
         if ( event.getAssignedUser() == null )
         {
@@ -90,7 +90,7 @@ public class AssignedUserValidationHook implements ValidationHook<Event>
         return Optional.empty();
     }
 
-    private Boolean isNotEnabledUserAssignment( TrackerBundle bundle, Event event )
+    private static Boolean isNotEnabledUserAssignment( TrackerBundle bundle, Event event )
     {
         ProgramStage programStage = bundle.getPreheat().get( ProgramStage.class, event.getProgramStage() );
         Boolean userAssignmentEnabled = programStage.isEnableUserAssignment();
@@ -99,13 +99,13 @@ public class AssignedUserValidationHook implements ValidationHook<Event>
             .orElse( false );
     }
 
-    private boolean assignedUserNotPresentInPreheat( TrackerBundle bundle, Event event )
+    private static boolean assignedUserNotPresentInPreheat( TrackerBundle bundle, Event event )
     {
         return bundle.getPreheat().get( User.class,
             event.getAssignedUser() ) == null;
     }
 
-    private boolean isNotValidAssignedUserUid( Event event )
+    private static boolean isNotValidAssignedUserUid( Event event )
     {
         return !CodeGenerator.isValidUid( event.getAssignedUser() );
     }

@@ -25,15 +25,16 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package org.hisp.dhis.tracker.validation.spike.one;
+package org.hisp.dhis.tracker.validation.spike.base;
 
 import java.util.Optional;
 
 import org.hisp.dhis.tracker.bundle.TrackerBundle;
+import org.hisp.dhis.tracker.domain.TrackerDto;
 import org.hisp.dhis.tracker.report.TrackerReportItem;
 
 @FunctionalInterface
-public interface ValidationHook<T>
+public interface ValidationHook<T extends TrackerDto>
 {
     // TODO instead of the bundle ideally it would be more focused like the
     // preheat ideally what we pass in is immutable
