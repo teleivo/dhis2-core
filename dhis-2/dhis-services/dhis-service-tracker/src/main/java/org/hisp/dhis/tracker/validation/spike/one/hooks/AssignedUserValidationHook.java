@@ -39,17 +39,11 @@ import org.hisp.dhis.tracker.bundle.TrackerBundle;
 import org.hisp.dhis.tracker.domain.Event;
 import org.hisp.dhis.tracker.report.TrackerErrorReport;
 import org.hisp.dhis.tracker.report.TrackerWarningReport;
-import org.hisp.dhis.tracker.validation.spike.one.ValidationHook;
 import org.hisp.dhis.user.User;
-import org.springframework.stereotype.Component;
 
-@Component
-public class AssignedUserValidationHook implements ValidationHook<Event>
+public class AssignedUserValidationHook
 {
-    // TODO so now we have one hook that potentially adds 2 errors to a report.
-    // How to organize, register this?
-    @Override
-    public Optional<TrackerErrorReport> validate( TrackerBundle bundle, Event event )
+    public static Optional<TrackerErrorReport> validateUserInPreheat( TrackerBundle bundle, Event event )
     {
         if ( event.getAssignedUser() == null )
         {
@@ -69,7 +63,6 @@ public class AssignedUserValidationHook implements ValidationHook<Event>
         return Optional.empty();
     }
 
-    // TODO second hook. how to hook this one in :)
     public static Optional<TrackerWarningReport> validateUserAssignmentIsEnabled( TrackerBundle bundle, Event event )
     {
         if ( event.getAssignedUser() == null )

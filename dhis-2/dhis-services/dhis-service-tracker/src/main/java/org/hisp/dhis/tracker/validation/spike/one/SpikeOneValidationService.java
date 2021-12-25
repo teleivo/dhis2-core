@@ -35,22 +35,26 @@ import lombok.AllArgsConstructor;
 
 import org.hisp.dhis.tracker.ValidationMode;
 import org.hisp.dhis.tracker.bundle.TrackerBundle;
+import org.hisp.dhis.tracker.domain.Enrollment;
 import org.hisp.dhis.tracker.domain.Event;
 import org.hisp.dhis.tracker.domain.TrackerDto;
 import org.hisp.dhis.tracker.report.TrackerReportItem;
 import org.hisp.dhis.tracker.report.TrackerValidationReport;
 
 @AllArgsConstructor
-public class SpikeValidationService implements ValidationService
+public class SpikeOneValidationService implements ValidationService
 {
 
-    // con: keeping them separate means interleaved order is impossible. note:
-    // looking at TrackerValidationConfig we are
-    // not doing that right now. We have PreChecks, then TrackerDto specific
-    // checks
-    private final List<ValidationHook<TrackerDto>> dtoHooks;
+    // con: keeping them separate means interleaved order of entity specific and
+    // agnostic hooks is impossible.
+    // note: looking at TrackerValidationConfig we are not doing that right now.
+    // so this con might not be that strong.
+    // We have PreChecks, then TrackerDto specific checks
+    private final List<ValidationHook<TrackerDto>> preCheckValidationHooks;
 
-    private final List<ValidationHook<Event>> eventHooks;
+    private final List<ValidationHook<Event>> eventValidationHooks;
+
+    private final List<ValidationHook<Enrollment>> enrollmentValidationHooks;
 
     public TrackerValidationReport validate( TrackerBundle bundle )
     {
@@ -63,11 +67,23 @@ public class SpikeValidationService implements ValidationService
         // TODO implement this method for all entities. How to write it in a
         // generic way so that I automatically
         // dispatch only to hooks interested in the hook
+        // TODO I could add a get(Event.class) to TrackerBundle? combine that
+        // with calling hooks based on class
         TrackerValidationReport report = new TrackerValidationReport();
 
+        // TODO fix FAIL_FAST mode test
+        // extract common code
         for ( Event event : bundle.getEvents() )
         {
-            validateEvents( report, bundle, event );
+            validateEvent( report, bundle, event );
+            if ( report.hasErrors() && bundle.getValidationMode() == ValidationMode.FAIL_FAST )
+            {
+                break;
+            }
+        }
+        for ( Enrollment enrollment : bundle.getEnrollments() )
+        {
+            validateEnrollment( report, bundle, enrollment );
             if ( report.hasErrors() && bundle.getValidationMode() == ValidationMode.FAIL_FAST )
             {
                 break;
@@ -78,9 +94,9 @@ public class SpikeValidationService implements ValidationService
         return report;
     }
 
-    private void validateEvents( TrackerValidationReport report, TrackerBundle bundle, Event event )
+    private void validateEvent( TrackerValidationReport report, TrackerBundle bundle, Event event )
     {
-        for ( ValidationHook hook : dtoHooks )
+        for ( ValidationHook<TrackerDto> hook : preCheckValidationHooks )
         {
             Optional<? extends TrackerReportItem> item = hook.validate( bundle, event );
             if ( item.isPresent() )
@@ -90,9 +106,33 @@ public class SpikeValidationService implements ValidationService
                 return;
             }
         }
-        for ( ValidationHook hook : eventHooks )
+        for ( ValidationHook<Event> hook : eventValidationHooks )
         {
             Optional<? extends TrackerReportItem> item = hook.validate( bundle, event );
+            if ( item.isPresent() )
+            {
+                report.add( item.get() );
+                // TODO only exit if hook specifies remove on error
+                return;
+            }
+        }
+    }
+
+    private void validateEnrollment( TrackerValidationReport report, TrackerBundle bundle, Enrollment enrollment )
+    {
+        for ( ValidationHook<TrackerDto> hook : preCheckValidationHooks )
+        {
+            Optional<? extends TrackerReportItem> item = hook.validate( bundle, enrollment );
+            if ( item.isPresent() )
+            {
+                report.add( item.get() );
+                // TODO only exit if hook specifies remove on error
+                return;
+            }
+        }
+        for ( ValidationHook<Enrollment> hook : enrollmentValidationHooks )
+        {
+            Optional<? extends TrackerReportItem> item = hook.validate( bundle, enrollment );
             if ( item.isPresent() )
             {
                 report.add( item.get() );
