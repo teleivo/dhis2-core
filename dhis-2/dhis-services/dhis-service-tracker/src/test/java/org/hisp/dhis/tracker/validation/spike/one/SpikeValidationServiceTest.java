@@ -25,37 +25,39 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package org.hisp.dhis.tracker.validation.spike.base;
+package org.hisp.dhis.tracker.validation.spike.one;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
 import org.hisp.dhis.common.CodeGenerator;
+import org.hisp.dhis.program.ProgramStage;
 import org.hisp.dhis.tracker.TrackerType;
 import org.hisp.dhis.tracker.ValidationMode;
 import org.hisp.dhis.tracker.bundle.TrackerBundle;
-import org.hisp.dhis.tracker.domain.Enrollment;
 import org.hisp.dhis.tracker.domain.Event;
 import org.hisp.dhis.tracker.preheat.TrackerPreheat;
 import org.hisp.dhis.tracker.report.TrackerErrorCode;
 import org.hisp.dhis.tracker.report.TrackerErrorReport;
 import org.hisp.dhis.tracker.report.TrackerValidationReport;
-import org.hisp.dhis.tracker.validation.spike.base.hooks.AssignedUserValidationHook;
-import org.hisp.dhis.tracker.validation.spike.base.hooks.UidValidationHook;
+import org.hisp.dhis.tracker.validation.spike.one.hooks.AssignedUserValidationHook;
+import org.hisp.dhis.tracker.validation.spike.one.hooks.UidValidationHook;
 import org.hisp.dhis.user.User;
 import org.jetbrains.annotations.NotNull;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
-class ValidationSpikeTest
+class SpikeValidationServiceTest
 {
 
     @Test
@@ -76,6 +78,9 @@ class ValidationSpikeTest
         when( preheat.get( User.class, validEvent.getAssignedUser() ) ).thenReturn( new User() );
         when( preheat.get( User.class, eventWithInvalidUid.getAssignedUser() ) ).thenReturn( new User() );
         when( preheat.get( User.class, eventWithInvalidAssignedUser.getAssignedUser() ) ).thenReturn( null );
+        ProgramStage programStage = new ProgramStage();
+        programStage.setEnableUserAssignment( true );
+        when( preheat.get( eq( ProgramStage.class ), any() ) ).thenReturn( programStage );
         TrackerBundle bundle = TrackerBundle.builder()
             .validationMode( ValidationMode.FULL )
             .skipRuleEngine( true )
@@ -84,7 +89,8 @@ class ValidationSpikeTest
             .build();
 
         ValidationService validationService = new SpikeValidationService(
-            List.of( new UidValidationHook(), new AssignedUserValidationHook() ) );
+            List.of( new UidValidationHook() ),
+            List.of( new AssignedUserValidationHook(), AssignedUserValidationHook::validateUserAssignmentIsEnabled ) );
 
         TrackerValidationReport report = validationService.validate( bundle );
 
@@ -109,14 +115,6 @@ class ValidationSpikeTest
         event.setEvent( CodeGenerator.generateUid() );
         event.setAssignedUser( CodeGenerator.generateUid() );
         return event;
-    }
-
-    @NotNull
-    private Enrollment enrollment()
-    {
-        Enrollment enrollment = new Enrollment();
-        enrollment.setEnrollment( CodeGenerator.generateUid() );
-        return enrollment;
     }
 
     @Test
@@ -152,7 +150,8 @@ class ValidationSpikeTest
                 .errorCode( TrackerErrorCode.E1048 )
                 .uid( e.getUid() )
                 .trackerType( e.getTrackerType() )
-                .build( b ) ) ) );
+                .build( b ) ) ),
+            Collections.emptyList() );
 
         TrackerValidationReport report = validationService.validate( bundle );
 
@@ -168,113 +167,4 @@ class ValidationSpikeTest
 
         verifyNoInteractions( hook2 );
     }
-
-    interface ReportItem
-    {
-        String getMessage();
-
-        TrackerErrorCode getCode();
-
-        TrackerType getType();
-
-        String getUid();
-    }
-
-    static class Error implements ReportItem
-    {
-
-        @Override
-        public String getMessage()
-        {
-            return "error";
-        }
-
-        @Override
-        public TrackerErrorCode getCode()
-        {
-            return null;
-        }
-
-        @Override
-        public TrackerType getType()
-        {
-            return null;
-        }
-
-        @Override
-        public String getUid()
-        {
-            return null;
-        }
-    }
-
-    static class Warning implements ReportItem
-    {
-
-        @Override
-        public String getMessage()
-        {
-            return "warning";
-        }
-
-        @Override
-        public TrackerErrorCode getCode()
-        {
-            return null;
-        }
-
-        @Override
-        public TrackerType getType()
-        {
-            return null;
-        }
-
-        @Override
-        public String getUid()
-        {
-            return null;
-        }
-    }
-
-    class Report
-    {
-        List<Error> errors;
-
-        List<Warning> warnings;
-
-        void add( Error error )
-        {
-            System.out.println( "error" );
-        }
-
-        void add( Warning warning )
-        {
-            System.out.println( "warning" );
-        }
-
-        void add( ReportItem item )
-        {
-            // TODO is there a way to split them into different collections
-            // based on its concrete type?
-            // other than using instance of or reflection?
-            System.out.println( "item" );
-            System.out.printf( "is error %s\n", item instanceof Error );
-            System.out.printf( "is warning %s\n", item instanceof Warning );
-        }
-    }
-
-    @Disabled( "TODO(TECH-880-spike) how to make a clean API but keeping internal structure" )
-    @Test
-    void howToReturnInterfaceReportItemButStorePerConcreteType()
-    {
-        Error err = new Error();
-        Warning warn = new Warning();
-        Report report = new Report();
-        ReportItem item = new Error();
-        report.add( err );
-        report.add( warn );
-        report.add( item );
-        report.add( (ReportItem) warn );
-    }
-
 }
