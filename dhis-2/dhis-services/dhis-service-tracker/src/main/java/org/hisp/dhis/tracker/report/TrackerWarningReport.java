@@ -48,7 +48,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  */
 @Data
 @Builder
-public class TrackerWarningReport
+public class TrackerWarningReport implements TrackerReportItem
 {
     private final String warningMessage;
 

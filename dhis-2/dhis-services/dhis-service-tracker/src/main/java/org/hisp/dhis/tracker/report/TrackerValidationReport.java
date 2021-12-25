@@ -74,10 +74,33 @@ public class TrackerValidationReport
     // -----------------------------------------------------------------------------------
     // Utility Methods
     // -----------------------------------------------------------------------------------
+    public void add( TrackerReportItem item )
+    {
+        // TODO is there an alternative to achieving this?
+        // is this frowned upon ;)
+        if ( item instanceof TrackerErrorReport )
+        {
+            this.add( (TrackerErrorReport) item );
+        }
+        else if ( item instanceof TrackerWarningReport )
+        {
+            this.add( (TrackerWarningReport) item );
+        }
+        else
+        {
+            throw new UnsupportedOperationException( "only TrackerErrorReport and TrackerWarningReport are supported" );
+        }
+    }
+
     public void add( TrackerErrorReport error )
     {
         this.invalidDTOs.computeIfAbsent( error.getTrackerType(), k -> new ArrayList<>() ).add( error.getUid() );
         this.errorReports.add( error );
+    }
+
+    public void add( TrackerWarningReport warning )
+    {
+        this.warningReports.add( warning );
     }
 
     public void add( TrackerValidationReport validationReport )

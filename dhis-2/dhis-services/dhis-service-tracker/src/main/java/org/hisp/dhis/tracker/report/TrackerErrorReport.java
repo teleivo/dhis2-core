@@ -49,7 +49,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  */
 @Data
 @Builder
-public class TrackerErrorReport
+public class TrackerErrorReport implements TrackerReportItem
 {
     private final String errorMessage;
 

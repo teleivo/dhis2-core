@@ -29,4 +29,5 @@ package org.hisp.dhis.tracker.report;
 
 public interface TrackerReportItem
 {
+
 }

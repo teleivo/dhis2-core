@@ -36,7 +36,7 @@ import lombok.AllArgsConstructor;
 import org.hisp.dhis.tracker.ValidationMode;
 import org.hisp.dhis.tracker.bundle.TrackerBundle;
 import org.hisp.dhis.tracker.domain.Event;
-import org.hisp.dhis.tracker.report.TrackerErrorReport;
+import org.hisp.dhis.tracker.report.TrackerReportItem;
 import org.hisp.dhis.tracker.report.TrackerValidationReport;
 
 @AllArgsConstructor
@@ -51,8 +51,6 @@ public class SpikeValidationService implements ValidationService
         // the bundle
         // make this part of the error?
         // TODO fix my generics in here
-        // TODO come up with an interface for error/warning which will be the
-        // return value of the interface
         // TODO implement a more evolved hook to see how this design affects
         // code arrangement
         // TODO implement this method for all entities. How to write it in a
@@ -77,10 +75,10 @@ public class SpikeValidationService implements ValidationService
     {
         for ( ValidationHook hook : hooks )
         {
-            Optional<TrackerErrorReport> error = hook.validate( bundle, event );
-            if ( error.isPresent() )
+            Optional<TrackerReportItem> item = hook.validate( bundle, event );
+            if ( item.isPresent() )
             {
-                report.add( error.get() );
+                report.add( item.get() );
                 // TODO only exit if hook specifies remove on error
                 return;
             }

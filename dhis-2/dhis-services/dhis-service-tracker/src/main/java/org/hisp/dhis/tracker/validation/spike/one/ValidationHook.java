@@ -30,13 +30,12 @@ package org.hisp.dhis.tracker.validation.spike.one;
 import java.util.Optional;
 
 import org.hisp.dhis.tracker.bundle.TrackerBundle;
-import org.hisp.dhis.tracker.report.TrackerErrorReport;
+import org.hisp.dhis.tracker.report.TrackerReportItem;
 
 @FunctionalInterface
 public interface ValidationHook<T>
 {
     // TODO instead of the bundle ideally it would be more focused like the
-    // preheat
-    // ideally what we pass in is immutable
-    Optional<TrackerErrorReport> validate( TrackerBundle bundle, T entity );
+    // preheat ideally what we pass in is immutable
+    Optional<? extends TrackerReportItem> validate( TrackerBundle bundle, T entity );
 }

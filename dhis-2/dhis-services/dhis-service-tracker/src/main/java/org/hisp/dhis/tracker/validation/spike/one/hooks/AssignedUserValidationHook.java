@@ -69,7 +69,7 @@ public class AssignedUserValidationHook implements ValidationHook<Event>
         return Optional.empty();
     }
 
-    // TODO double challenge. warning and second hook in a hook
+    // TODO second hook. how to hook this one in :)
     public Optional<TrackerWarningReport> validate2( TrackerBundle bundle, Event event )
     {
         if ( event.getAssignedUser() == null )

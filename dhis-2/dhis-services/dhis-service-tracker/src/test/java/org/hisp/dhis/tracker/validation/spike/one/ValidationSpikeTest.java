@@ -247,8 +247,10 @@ class ValidationSpikeTest
         {
             // TODO is there a way to split them into different collections
             // based on its concrete type?
-            // other than using reflection?
+            // other than using instance of or reflection?
             System.out.println( "item" );
+            System.out.printf( "is error %s\n", item instanceof Error );
+            System.out.printf( "is warning %s\n", item instanceof Warning );
         }
     }
 
@@ -263,6 +265,7 @@ class ValidationSpikeTest
         report.add( err );
         report.add( warn );
         report.add( item );
+        report.add( (ReportItem) warn );
     }
 
 }
