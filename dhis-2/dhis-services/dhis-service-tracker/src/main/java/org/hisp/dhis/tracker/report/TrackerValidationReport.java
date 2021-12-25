@@ -28,12 +28,18 @@
 package org.hisp.dhis.tracker.report;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Predicate;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import org.hisp.dhis.tracker.TrackerType;
+import org.hisp.dhis.tracker.domain.TrackerDto;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -59,9 +65,20 @@ public class TrackerValidationReport
     @Builder.Default
     private List<TrackerValidationHookTimerReport> performanceReport = new ArrayList<>();
 
+    /*
+     * A map that keep tracks of all the invalid Tracker objects encountered
+     * during the validation process
+     */
+    private Map<TrackerType, List<String>> invalidDTOs = new HashMap<>();
+
     // -----------------------------------------------------------------------------------
     // Utility Methods
     // -----------------------------------------------------------------------------------
+    public void add( TrackerErrorReport error )
+    {
+        this.invalidDTOs.computeIfAbsent( error.getTrackerType(), k -> new ArrayList<>() ).add( error.getUid() );
+        this.errorReports.add( error );
+    }
 
     public void add( TrackerValidationReport validationReport )
     {
@@ -124,5 +141,29 @@ public class TrackerValidationReport
         {
             this.warningReports.add( report );
         }
+    }
+
+    /**
+     * Checks if the provided uid and Tracker Type is part of the invalid
+     * entities
+     */
+    public boolean isInvalid( TrackerType trackerType, String uid )
+    {
+        return this.invalidDTOs.getOrDefault( trackerType, new ArrayList<>() ).contains( uid );
+    }
+
+    public boolean isInvalid( TrackerDto dto )
+    {
+        return this.isInvalid( dto.getTrackerType(), dto.getUid() );
+    }
+
+    public boolean hasErrorReport( Predicate<TrackerErrorReport> test )
+    {
+        return errorReports.stream().anyMatch( test );
+    }
+
+    public boolean hasWarningReport( Predicate<TrackerWarningReport> test )
+    {
+        return warningReports.stream().anyMatch( test );
     }
 }
