@@ -376,7 +376,9 @@
             <configuration>
               <skipTests>false</skipTests>
               <trimStackTrace>false</trimStackTrace>
-              <argLine>${surefireArgLine}</argLine>
+              <!--              <argLine>@{surefireArgLine}</argLine>-->
+              <!--              TODO this is the one we have in the sonarqube profile, is this one working?-->
+              <!--              <argLine>${argLine} ${surefireArgLine}</argLine>-->
               <groups>integration</groups>
             </configuration>
             <dependencies>
@@ -403,7 +405,9 @@
             <configuration>
               <skipTests>false</skipTests>
               <trimStackTrace>false</trimStackTrace>
-              <argLine>${surefireArgLine}</argLine>
+              <!--              <argLine>@{surefireArgLine}</argLine>-->
+              <!--              TODO this is the one we have in the sonarqube profile, is this one working?-->
+              <!--              <argLine>${argLine} ${surefireArgLine}</argLine>-->
               <groups>integrationH2</groups>
             </configuration>
             <dependencies>
