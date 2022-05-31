@@ -34,7 +34,8 @@ jobs:
       # will need to use upload-artifact action and then fan-in in a coverage
       # job to upload all jacoco files
       - name: Gather coverage report paths
-        run: echo "JACOCO_COVERAGE_REPORTS=$(find . -path '*jacoco.xml' | sed 's/.*/&/' | tr '\n' ',')" >> $GITHUB_ENV
+        # get a comma separated list of jacoco reports (removing the last comma using sed)
+        run: echo "JACOCO_COVERAGE_REPORTS=$(find . -path '*jacoco.xml' -printf '%p,' | sed 's/\(.*\),/\1/')" >> $GITHUB_ENV
       - name: Debug coverage report paths
         run: "echo ${{ env.JACOCO_COVERAGE_REPORTS }}"
       - name: Report coverage to codacy
