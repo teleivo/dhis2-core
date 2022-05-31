@@ -36,8 +36,6 @@ jobs:
       - name: Gather coverage report paths
         # get a comma separated list of jacoco reports (removing the last comma using sed)
         run: echo "JACOCO_COVERAGE_REPORTS=$(find . -path '*jacoco.xml' -printf '%p,' | sed 's/\(.*\),/\1/')" >> $GITHUB_ENV
-      - name: Debug coverage report paths
-        run: "echo ${{ env.JACOCO_COVERAGE_REPORTS }}"
       - name: Report coverage to codacy
         uses: codacy/codacy-coverage-reporter-action@v1
         with:
@@ -47,9 +45,9 @@ jobs:
         uses: codecov/codecov-action@v2
         with:
           files: ${{ env.JACOCO_COVERAGE_REPORTS }}
-          flags: unittests # optional
-          fail_ci_if_error: true # optional (default = false)
-          verbose: true # optional (default = false)
+          flags: unit
+          fail_ci_if_error: true
+          verbose: true
 
   integration-test:
     runs-on: ubuntu-latest
@@ -63,6 +61,16 @@ jobs:
           cache: maven
       - name: Run integration tests
         run: mvn clean test --threads 2C --batch-mode --no-transfer-progress -Pintegration -DexcludeAnalyticsTests=true -f ./dhis-2/pom.xml -pl -dhis-web-embedded-jetty
+      - name: Gather coverage report paths
+        # get a comma separated list of jacoco reports (removing the last comma using sed)
+        run: echo "JACOCO_COVERAGE_REPORTS=$(find . -path '*jacoco.xml' -printf '%p,' | sed 's/\(.*\),/\1/')" >> $GITHUB_ENV
+      - name: Report coverage to codecov
+        uses: codecov/codecov-action@v2
+        with:
+          files: ${{ env.JACOCO_COVERAGE_REPORTS }}
+          flags: integration
+          fail_ci_if_error: true
+          verbose: true
       - name: Archive surefire reports
         uses: actions/upload-artifact@v3
         with:
@@ -82,6 +90,16 @@ jobs:
           cache: maven
       - name: Run integration h2 tests
         run: mvn clean test --threads 2C --batch-mode --no-transfer-progress -PintegrationH2 -f ./dhis-2/pom.xml -pl -dhis-web-embedded-jetty
+      - name: Gather coverage report paths
+        # get a comma separated list of jacoco reports (removing the last comma using sed)
+        run: echo "JACOCO_COVERAGE_REPORTS=$(find . -path '*jacoco.xml' -printf '%p,' | sed 's/\(.*\),/\1/')" >> $GITHUB_ENV
+      - name: Report coverage to codecov
+        uses: codecov/codecov-action@v2
+        with:
+          files: ${{ env.JACOCO_COVERAGE_REPORTS }}
+          flags: integration-h2
+          fail_ci_if_error: true
+          verbose: true
       - name: Archive surefire reports
         uses: actions/upload-artifact@v3
         with:
@@ -107,6 +125,16 @@ jobs:
         env:
           MAVEN_OPTS: -Dhttp.keepAlive=false -Dmaven.wagon.http.pool=false -Dmaven.wagon.http.retryHandler.class=standard -Dmaven.wagon.http.retryHandler.count=3 -Dmaven.wagon.httpconnectionManager.ttlSeconds=125
         run: mvn test -Pintegration --batch-mode --no-transfer-progress -f ./dhis-2/dhis-services/dhis-service-analytics/pom.xml
+      - name: Gather coverage report paths
+        # get a comma separated list of jacoco reports (removing the last comma using sed)
+        run: echo "JACOCO_COVERAGE_REPORTS=$(find . -path '*jacoco.xml' -printf '%p,' | sed 's/\(.*\),/\1/')" >> $GITHUB_ENV
+      - name: Report coverage to codecov
+        uses: codecov/codecov-action@v2
+        with:
+          files: ${{ env.JACOCO_COVERAGE_REPORTS }}
+          flags: integration
+          fail_ci_if_error: true
+          verbose: true
       - name: Archive surefire reports
         uses: actions/upload-artifact@v3
         with:
