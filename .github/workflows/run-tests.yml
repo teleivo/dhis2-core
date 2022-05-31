@@ -40,6 +40,13 @@ jobs:
         with:
           api-token: ${{ secrets.CODACY_API_TOKEN }}
           coverage-reports: ${{ env.JACOCO_COVERAGE_REPORTS }}
+      - name: Report coverage to codecov
+        uses: codecov/codecov-action@v2
+        with:
+          files: ${{ env.JACOCO_COVERAGE_REPORTS }}
+          flags: unittests # optional
+          fail_ci_if_error: true # optional (default = false)
+          verbose: true # optional (default = false)
 
   integration-test:
     runs-on: ubuntu-latest
