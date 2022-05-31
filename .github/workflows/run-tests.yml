@@ -60,7 +60,7 @@ jobs:
           distribution: temurin
           cache: maven
       - name: Run integration tests
-        run: mvn clean test --threads 2C --batch-mode --no-transfer-progress -Pintegration -DexcludeAnalyticsTests=true -f ./dhis-2/pom.xml -pl -dhis-web-embedded-jetty
+        run: mvn clean verify --threads 2C --batch-mode --no-transfer-progress -Pintegration -DexcludeAnalyticsTests=true -f ./dhis-2/pom.xml -pl -dhis-web-embedded-jetty
       - name: Gather coverage report paths
         # get a comma separated list of jacoco reports (removing the last comma using sed)
         run: echo "JACOCO_COVERAGE_REPORTS=$(find . -path '*jacoco.xml' -printf '%p,' | sed 's/\(.*\),/\1/')" >> $GITHUB_ENV
@@ -89,7 +89,7 @@ jobs:
           distribution: temurin
           cache: maven
       - name: Run integration h2 tests
-        run: mvn clean test --threads 2C --batch-mode --no-transfer-progress -PintegrationH2 -f ./dhis-2/pom.xml -pl -dhis-web-embedded-jetty
+        run: mvn clean verify --threads 2C --batch-mode --no-transfer-progress -PintegrationH2 -f ./dhis-2/pom.xml -pl -dhis-web-embedded-jetty
       - name: Gather coverage report paths
         # get a comma separated list of jacoco reports (removing the last comma using sed)
         run: echo "JACOCO_COVERAGE_REPORTS=$(find . -path '*jacoco.xml' -printf '%p,' | sed 's/\(.*\),/\1/')" >> $GITHUB_ENV
@@ -124,7 +124,7 @@ jobs:
       - name: Run analytics integration tests
         env:
           MAVEN_OPTS: -Dhttp.keepAlive=false -Dmaven.wagon.http.pool=false -Dmaven.wagon.http.retryHandler.class=standard -Dmaven.wagon.http.retryHandler.count=3 -Dmaven.wagon.httpconnectionManager.ttlSeconds=125
-        run: mvn test -Pintegration --batch-mode --no-transfer-progress -f ./dhis-2/dhis-services/dhis-service-analytics/pom.xml
+        run: mvn verify -Pintegration --batch-mode --no-transfer-progress -f ./dhis-2/dhis-services/dhis-service-analytics/pom.xml
       - name: Gather coverage report paths
         # get a comma separated list of jacoco reports (removing the last comma using sed)
         run: echo "JACOCO_COVERAGE_REPORTS=$(find . -path '*jacoco.xml' -printf '%p,' | sed 's/\(.*\),/\1/')" >> $GITHUB_ENV
