@@ -35,6 +35,8 @@ jobs:
       # job to upload all jacoco files
       - name: Gather coverage report paths
         run: echo "JACOCO_COVERAGE_REPORTS=$(find . -path '*jacoco.xml' | sed 's/.*/&/' | tr '\n' ',')" >> $GITHUB_ENV
+      - name: Debug coverage report paths
+        run: "echo ${{ env.JACOCO_COVERAGE_REPORTS }}"
       - name: Report coverage to codacy
         uses: codacy/codacy-coverage-reporter-action@v1
         with:
