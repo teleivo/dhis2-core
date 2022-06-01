@@ -42,7 +42,7 @@ jobs:
           api-token: ${{ secrets.CODACY_API_TOKEN }}
           coverage-reports: ${{ env.JACOCO_COVERAGE_REPORTS }}
       - name: Report coverage to codecov
-        uses: codecov/codecov-action@v2
+        uses: codecov/codecov-action@v3
         with:
           directory: ./dhis-2
           flags: unit
@@ -65,7 +65,7 @@ jobs:
         # get a comma separated list of jacoco reports (removing the last comma using sed)
         run: echo "JACOCO_COVERAGE_REPORTS=$(find . -path '*jacoco.xml' -printf '%p,' | sed 's/\(.*\),/\1/')" >> $GITHUB_ENV
       - name: Report coverage to codecov
-        uses: codecov/codecov-action@v2
+        uses: codecov/codecov-action@v3
         with:
           directory: ./dhis-2
           flags: integration
@@ -94,7 +94,7 @@ jobs:
         # get a comma separated list of jacoco reports (removing the last comma using sed)
         run: echo "JACOCO_COVERAGE_REPORTS=$(find . -path '*jacoco.xml' -printf '%p,' | sed 's/\(.*\),/\1/')" >> $GITHUB_ENV
       - name: Report coverage to codecov
-        uses: codecov/codecov-action@v2
+        uses: codecov/codecov-action@v3
         with:
           directory: ./dhis-2
           flags: integration-h2
@@ -129,7 +129,7 @@ jobs:
         # get a comma separated list of jacoco reports (removing the last comma using sed)
         run: echo "JACOCO_COVERAGE_REPORTS=$(find . -path '*jacoco.xml' -printf '%p,' | sed 's/\(.*\),/\1/')" >> $GITHUB_ENV
       - name: Report coverage to codecov
-        uses: codecov/codecov-action@v2
+        uses: codecov/codecov-action@v3
         with:
           directory: ./dhis-2
           flags: integration
