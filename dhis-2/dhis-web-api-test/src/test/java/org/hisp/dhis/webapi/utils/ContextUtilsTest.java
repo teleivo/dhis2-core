@@ -74,6 +74,7 @@ import org.springframework.mock.web.MockHttpServletResponse;
 /**
  * @author Stian Sandvold
  */
+@Disabled
 class ContextUtilsTest extends DhisWebSpringTest
 {
 
